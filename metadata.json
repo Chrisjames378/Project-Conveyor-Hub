@@ -1,0 +1,6 @@
+{
+  "name": "Project Conveyor",
+  "description": "SaliBuoy Systems: A Hardware-First System for Atlantic Meridional Overturning Circulation (AMOC) Stabilization & Polar Cryo-Restoration",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
