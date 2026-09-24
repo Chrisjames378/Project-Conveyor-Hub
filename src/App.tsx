@@ -16,6 +16,7 @@ import { ThreeDControlDatabase } from './components/ThreeDControlDatabase';
 import { SatelliteWeather } from './components/SatelliteWeather';
 import { EcoImpactAudit } from './components/EcoImpactAudit';
 import { FinancialModel } from './components/FinancialModel';
+import { SystemDynamics } from './components/SystemDynamics';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('landing');
@@ -29,6 +30,7 @@ export function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 space-y-6">
         {activeTab === 'landing' && <LandingPage setActiveTab={setActiveTab} />}
         {activeTab === 'overview' && <Dashboard setActiveTab={setActiveTab} />}
+        {activeTab === 'system-dynamics' && <SystemDynamics />}
         {activeTab === '3d-control' && <ThreeDControlDatabase />}
         {activeTab === 'satellite-weather' && <SatelliteWeather />}
         {activeTab === 'financial-model' && <FinancialModel />}

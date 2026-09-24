@@ -1,6 +1,7 @@
 export type ActiveTab = 
   | 'landing'
   | 'overview' 
+  | 'system-dynamics'
   | 'funding' 
   | 'hardware' 
   | '3d-control'

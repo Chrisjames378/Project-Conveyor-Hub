@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@google/genai": "^2.21.0",
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0",
     "express": "^4.19.2",
     "lucide-react": "^0.344.0",
     "octokit": "^5.0.5",

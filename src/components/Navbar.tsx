@@ -16,7 +16,8 @@ import {
   Box,
   Leaf,
   Calculator,
-  Radio
+  Radio,
+  LineChart
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -28,6 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const navItems: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: 'landing', label: 'Investor Landing', icon: <Globe2 className="w-4 h-4 text-emerald-400" />, badge: 'PUBLIC' },
     { id: 'overview', label: 'Overview & AMOC', icon: <Compass className="w-4 h-4" /> },
+    { id: 'system-dynamics', label: 'System Dynamics 50-Yr', icon: <LineChart className="w-4 h-4 text-sky-400" />, badge: 'D3.JS' },
     { id: '3d-control', label: '3D CAD Control Database', icon: <Box className="w-4 h-4 text-cyan-400" />, badge: '3D TWIN' },
     { id: 'satellite-weather', label: 'Polar & NZ Satellite Radar', icon: <Radio className="w-4 h-4 text-sky-400" />, badge: 'NOAA/NASA/HIMAWARI' },
     { id: 'financial-model', label: 'Fleet Financial Model', icon: <Calculator className="w-4 h-4 text-emerald-400" />, badge: 'ROI/NPV' },
