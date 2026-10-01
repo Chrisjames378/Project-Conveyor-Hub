@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { ActiveTab } from './types';
 import { Navbar } from './components/Navbar';
 import { LandingPage } from './components/LandingPage';
@@ -56,6 +57,7 @@ export function App() {
           <span>Engineering Base: Pukekohe, Auckland, New Zealand • AMOC Stabilization Platform</span>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
