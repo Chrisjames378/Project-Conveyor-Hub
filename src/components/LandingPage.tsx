@@ -130,6 +130,23 @@ Operations Base: Pukekohe, Auckland, New Zealand`;
             </button>
 
             <button
+              onClick={() => setActiveTab('ocean-boys-fleet')}
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 bg-gradient-to-r from-teal-950 via-slate-900 to-sky-950 hover:from-teal-900 hover:to-sky-900 text-teal-200 border border-teal-500/60 font-mono text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-lg shadow-teal-950/50"
+            >
+              <Radio className="w-4 h-4 text-teal-400 animate-pulse" />
+              <span>The Ocean Boys & Satellite Fleet</span>
+              <span className="px-1.5 py-0.2 bg-teal-800 text-[10px] text-white rounded font-bold">23 BOYS</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('oceania-observatory')}
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 bg-gradient-to-r from-cyan-950 to-indigo-950 hover:from-cyan-900 hover:to-indigo-900 text-cyan-200 border border-cyan-500/50 font-mono text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-lg shadow-cyan-950/40"
+            >
+              <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <span>3D Oceania & Polar Observatory</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('overview')}
               className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 bg-slate-950 hover:bg-slate-900 text-sky-300 border border-sky-800/60 font-mono text-xs sm:text-sm rounded-xl transition-all cursor-pointer"
             >

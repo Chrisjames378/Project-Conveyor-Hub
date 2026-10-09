@@ -12,7 +12,8 @@ import {
   Layers,
   Thermometer,
   Zap,
-  Building2
+  Building2,
+  Globe
 } from 'lucide-react';
 import { AmocSummaryOneDriveToggle } from './AmocSummaryOneDriveToggle';
 import { SyncToGitHub } from './SyncToGitHub';
@@ -45,8 +46,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
 
           <div className="pt-2 flex flex-wrap gap-3">
             <button
+              onClick={() => setActiveTab('global-climate')}
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 via-teal-500 to-emerald-600 hover:from-sky-400 hover:to-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-sky-950/80 transition-all duration-200 cursor-pointer"
+            >
+              <Globe className="w-4 h-4" />
+              <span>Global Climate & NOAA SST</span>
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
+
+            <button
               onClick={() => setActiveTab('nz-business')}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-sky-950/80 transition-all duration-200 cursor-pointer"
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-sky-800/80 font-semibold text-xs sm:text-sm transition-all duration-200 cursor-pointer"
             >
               <Building2 className="w-4 h-4" />
               <span>NZ Sole Trader & Business Setup</span>

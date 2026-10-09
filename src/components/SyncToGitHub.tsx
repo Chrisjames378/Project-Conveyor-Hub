@@ -12,7 +12,13 @@ import {
   ChevronDown, 
   ChevronUp,
   FileCode,
-  ShieldAlert
+  ShieldAlert,
+  Globe,
+  Copy,
+  Check,
+  HelpCircle,
+  Info,
+  Sparkles
 } from 'lucide-react';
 
 interface FileSummary {
@@ -43,6 +49,45 @@ export const SyncToGitHub: React.FC = () => {
   const [fileList, setFileList] = useState<FileSummary[]>([]);
   const [isLoadingFiles, setIsLoadingFiles] = useState<boolean>(false);
   const [showFileList, setShowFileList] = useState<boolean>(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [showUrlGuide, setShowUrlGuide] = useState<boolean>(true);
+
+  // App live URLs
+  const previewAppUrl = "https://ais-pre-anvaiib6x42jeyxbs5k5ki-205273580701.asia-east1.run.app";
+  const devAppUrl = "https://ais-dev-anvaiib6x42jeyxbs5k5ki-205273580701.asia-east1.run.app";
+
+  const copyToClipboard = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2500);
+  };
+
+  // Helper to extract owner and repo from any raw string or full URL
+  const sanitizeAndParseRepo = (ownerInput: string, repoInput: string) => {
+    let cleanOwner = ownerInput.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\/$/, '');
+    let cleanRepo = repoInput.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/\/$/, '');
+
+    if (cleanOwner.includes('/')) {
+      const parts = cleanOwner.split('/').filter(Boolean);
+      cleanOwner = parts[0];
+      if (parts[1]) cleanRepo = parts[1];
+    }
+    if (cleanRepo.includes('/')) {
+      const parts = cleanRepo.split('/').filter(Boolean);
+      if (parts.length >= 2) {
+        cleanOwner = parts[parts.length - 2];
+        cleanRepo = parts[parts.length - 1];
+      }
+    }
+
+    return { cleanOwner, cleanRepo };
+  };
+
+  const handleQuickPasteUrl = (url: string) => {
+    const { cleanOwner, cleanRepo } = sanitizeAndParseRepo(url, '');
+    if (cleanOwner) setRepoOwner(cleanOwner);
+    if (cleanRepo) setRepoName(cleanRepo);
+  };
 
   // Load saved token & repo settings from localStorage on mount
   useEffect(() => {
@@ -90,21 +135,23 @@ export const SyncToGitHub: React.FC = () => {
     setSyncError(null);
     setSyncSuccess(null);
 
+    const { cleanOwner, cleanRepo } = sanitizeAndParseRepo(repoOwner, repoName);
+
     if (!githubToken.trim()) {
       setSyncError('Please enter a GitHub Personal Access Token (PAT).');
       return;
     }
 
-    if (!repoOwner.trim() || !repoName.trim()) {
-      setSyncError('Please specify both GitHub Repo Owner and Repository Name.');
+    if (!cleanOwner || !cleanRepo) {
+      setSyncError('Please specify both GitHub Repo Owner and Repository Name (e.g. chris-james378 and salibuoy-systems-conveyor).');
       return;
     }
 
     // Save token if requested
     if (rememberToken) {
       localStorage.setItem('salibuoy_github_pat', githubToken.trim());
-      localStorage.setItem('salibuoy_github_owner', repoOwner.trim());
-      localStorage.setItem('salibuoy_github_repo', repoName.trim());
+      localStorage.setItem('salibuoy_github_owner', cleanOwner);
+      localStorage.setItem('salibuoy_github_repo', cleanRepo);
     } else {
       localStorage.removeItem('salibuoy_github_pat');
     }
@@ -120,8 +167,8 @@ export const SyncToGitHub: React.FC = () => {
         },
         body: JSON.stringify({
           token: githubToken.trim(),
-          owner: repoOwner.trim(),
-          repo: repoName.trim(),
+          owner: cleanOwner,
+          repo: cleanRepo,
           branch: branch.trim() || 'main',
           commitMessage: commitMessage.trim() || 'Sync source code via SaliBuoy Systems Octokit Engine',
           createIfNotExists,
@@ -202,8 +249,117 @@ export const SyncToGitHub: React.FC = () => {
         </div>
       )}
 
+      {/* Active Deployment URLs & Domain Guide */}
+      <div className="bg-slate-950/90 border border-sky-900/60 rounded-xl p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Globe className="w-4 h-4 text-sky-400" />
+            <h4 className="text-xs font-bold font-mono text-white uppercase tracking-wider">
+              Project Conveyor Live URLs & Deployment Guide
+            </h4>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowUrlGuide(!showUrlGuide)}
+            className="text-[11px] font-mono text-sky-400 hover:text-sky-300 flex items-center space-x-1 cursor-pointer"
+          >
+            <span>{showUrlGuide ? 'Hide URLs' : 'Show URLs'}</span>
+            {showUrlGuide ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        </div>
+
+        {showUrlGuide && (
+          <div className="space-y-3 pt-1 text-xs font-mono">
+            {/* 1. Public Shared App URL */}
+            <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-lg space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-emerald-400 font-bold flex items-center space-x-1.5 text-[11px]">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block"></span>
+                  <span>1. PUBLIC / SHARED APP URL (No Login Required)</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(previewAppUrl, 'preview')}
+                  className="inline-flex items-center space-x-1 text-[10px] text-sky-400 hover:text-sky-300 cursor-pointer"
+                >
+                  {copiedKey === 'preview' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedKey === 'preview' ? 'Copied!' : 'Copy Link'}</span>
+                </button>
+              </div>
+              <div className="flex items-center justify-between bg-slate-950 px-2.5 py-1.5 rounded border border-slate-800 text-[11px] break-all">
+                <span className="text-slate-200">{previewAppUrl}</span>
+                <a href={previewAppUrl} target="_blank" rel="noreferrer" className="text-sky-400 hover:text-sky-300 ml-2 flex-shrink-0">
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+              <p className="text-[10px] text-slate-400">
+                Use this URL to view, test, and share the full live application with anyone on any browser.
+              </p>
+              <div className="p-2 bg-sky-950/40 border border-sky-800/40 rounded text-[10px] text-sky-300 space-y-0.5">
+                <span className="font-bold text-emerald-400">📱 iPhone & Mobile Notice:</span> Always use this Public URL. Never use the <code className="text-amber-300">ais-dev-...</code> link on iPhone, because Safari&apos;s Tracking Prevention blocks Google Cloud session cookies and throws a <strong>401 &quot;Malformed Request&quot;</strong>. This Public URL has no login and works immediately!
+              </div>
+            </div>
+
+            {/* 2. GitHub Pages Deployment URL */}
+            <div className="p-3 bg-slate-900/90 border border-slate-800 rounded-lg space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-sky-400 font-bold flex items-center space-x-1.5 text-[11px]">
+                  <Github className="w-3.5 h-3.5 text-sky-400" />
+                  <span>2. GITHUB PAGES URL (Automated via .github/workflows/deploy.yml)</span>
+                </span>
+                {repoOwner && (
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(`https://${repoOwner}.github.io/${repoName}/`, 'ghpages')}
+                    className="inline-flex items-center space-x-1 text-[10px] text-sky-400 hover:text-sky-300 cursor-pointer"
+                  >
+                    {copiedKey === 'ghpages' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                    <span>{copiedKey === 'ghpages' ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center justify-between bg-slate-950 px-2.5 py-1.5 rounded border border-slate-800 text-[11px] break-all">
+                <span className="text-sky-300">
+                  https://{repoOwner || '<your-github-username>'}.github.io/{repoName || 'salibuoy-systems-conveyor'}/
+                </span>
+              </div>
+              <div className="p-2 bg-amber-950/30 border border-amber-800/50 rounded text-[10px] text-amber-200/90 space-y-1">
+                <div className="font-bold flex items-center space-x-1 text-amber-300">
+                  <Info className="w-3 h-3 flex-shrink-0" />
+                  <span>Why GitHub says &quot;Can&apos;t use all of them&quot; or Custom Domain errors:</span>
+                </div>
+                <ul className="list-disc list-inside space-y-0.5 text-slate-300">
+                  <li>
+                    <strong>Do NOT enter Cloud Run URLs into GitHub Pages &quot;Custom domain&quot;</strong>: GitHub will reject <code className="text-amber-200 bg-slate-950 px-1 py-0.5 rounded">ais-dev-...run.app</code> because only domains with DNS CNAME records pointing to GitHub are valid custom domains.
+                  </li>
+                  <li>
+                    <strong>Correct GitHub Pages Setting</strong>: In your GitHub Repo &rarr; <strong>Settings</strong> &rarr; <strong>Pages</strong> &rarr; Under <em>Build and deployment / Source</em>, choose <strong>&quot;GitHub Actions&quot;</strong>. Leave Custom Domain empty. The workflow will automatically deploy!
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Sync Form */}
       <form onSubmit={handleSync} className="space-y-5">
+        {/* Quick URL Auto-Fill */}
+        <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-1.5">
+          <label className="block text-[11px] font-mono font-medium text-slate-300">
+            Quick Auto-Fill from Full GitHub Repository URL:
+          </label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              placeholder="e.g. https://github.com/chris-james378/salibuoy-systems-conveyor"
+              onChange={(e) => handleQuickPasteUrl(e.target.value)}
+              className="flex-1 bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-600 font-mono focus:outline-none"
+            />
+            <span className="text-[10px] text-slate-500 font-mono">Auto-populates Owner & Repo</span>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* GitHub Personal Access Token */}
           <div className="space-y-1.5 md:col-span-2">
@@ -251,7 +407,14 @@ export const SyncToGitHub: React.FC = () => {
             <input
               type="text"
               value={repoOwner}
-              onChange={(e) => setRepoOwner(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val.includes('/') || val.includes('github.com')) {
+                  handleQuickPasteUrl(val);
+                } else {
+                  setRepoOwner(val);
+                }
+              }}
               placeholder="e.g. chris-james378 or organization"
               className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-600 font-mono focus:outline-none focus:ring-1 focus:ring-sky-500"
               required
@@ -266,7 +429,14 @@ export const SyncToGitHub: React.FC = () => {
             <input
               type="text"
               value={repoName}
-              onChange={(e) => setRepoName(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val.includes('/') || val.includes('github.com')) {
+                  handleQuickPasteUrl(val);
+                } else {
+                  setRepoName(val);
+                }
+              }}
               placeholder="salibuoy-systems-conveyor"
               className="w-full bg-slate-950 border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-600 font-mono focus:outline-none focus:ring-1 focus:ring-sky-500"
               required

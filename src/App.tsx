@@ -17,6 +17,10 @@ import { SatelliteWeather } from './components/SatelliteWeather';
 import { EcoImpactAudit } from './components/EcoImpactAudit';
 import { FinancialModel } from './components/FinancialModel';
 import { SystemDynamics } from './components/SystemDynamics';
+import { GlobalClimateDashboard } from './components/GlobalClimateDashboard';
+import { OceaniaObservatory } from './components/OceaniaObservatory';
+import { OceanBoysFleet } from './components/OceanBoysFleet';
+import { WeatherPollution3DModel } from './components/WeatherPollution3DModel';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('landing');
@@ -30,6 +34,10 @@ export function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 space-y-6">
         {activeTab === 'landing' && <LandingPage setActiveTab={setActiveTab} />}
         {activeTab === 'overview' && <Dashboard setActiveTab={setActiveTab} />}
+        {activeTab === 'ocean-boys-fleet' && <OceanBoysFleet />}
+        {activeTab === 'weather-pollution-3d' && <WeatherPollution3DModel />}
+        {activeTab === 'oceania-observatory' && <OceaniaObservatory />}
+        {activeTab === 'global-climate' && <GlobalClimateDashboard />}
         {activeTab === 'system-dynamics' && <SystemDynamics />}
         {activeTab === '3d-control' && <ThreeDControlDatabase />}
         {activeTab === 'satellite-weather' && <SatelliteWeather />}

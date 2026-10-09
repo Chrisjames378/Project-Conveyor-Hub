@@ -204,6 +204,17 @@ export const TelemetrySim: React.FC = () => {
             </a>
           </div>
         )}
+
+        {/* Global Ocean Boys Fleet Callout */}
+        <div className="p-3 bg-teal-950/30 border border-teal-800/50 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-xs text-teal-300">
+          <div className="flex items-center space-x-2">
+            <Radio className="w-4 h-4 text-teal-400 animate-pulse" />
+            <span>Expanded Fleet: <strong>23 Ocean Boys</strong> across Pacific, Southern Ocean & Sub-Polar Basins with real-time Himawari-9 & GOES-18 satellite feeds.</span>
+          </div>
+          <span className="text-[10px] bg-teal-950 text-teal-300 px-2.5 py-1 rounded border border-teal-800 font-bold shrink-0">
+            OPPO A5X OPTIMIZED
+          </span>
+        </div>
       </div>
 
       {/* Buoy Select Cards Grid */}

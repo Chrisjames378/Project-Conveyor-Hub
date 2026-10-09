@@ -24,6 +24,7 @@ import {
 import { downloadFile } from '../utils/exportUtils';
 import { requestGoogleAccessToken } from '../utils/googleAuth';
 import { microsoftGraphService, OneDriveFileItem } from '../services/microsoftGraphService';
+import { WeatherPollution3DModel } from './WeatherPollution3DModel';
 
 interface SavedSnapshot {
   id: string;
@@ -174,6 +175,7 @@ export const PolarAnalysisPanel: React.FC = () => {
 };
 
 export const SatelliteWeather: React.FC = () => {
+  const [subViewMode, setSubViewMode] = useState<'2d-radar' | '3d-patterns'>('2d-radar');
   const [selectedRegion, setSelectedRegion] = useState<'new-zealand' | 'south-pole' | 'north-pole'>('new-zealand');
   const [selectedSatId, setSelectedSatId] = useState<string>('himawari-9');
   const [activeLayer, setActiveLayer] = useState<'true-color' | 'wind-vectors' | 'sea-ice' | 'infrared'>('true-color');
@@ -712,7 +714,45 @@ ${aiReport || 'No AI analysis run yet. Trigger analysis in the SaliBuoy Satellit
         )}
       </div>
 
-      {/* Microsoft Graph API OneDrive Account & Sync Panel */}
+      {/* Visual Mode Sub-Switcher */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/90 p-2 rounded-2xl border border-slate-800 font-mono text-xs shadow-md">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setSubViewMode('2d-radar')}
+            className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+              subViewMode === '2d-radar'
+                ? 'bg-sky-600 text-white shadow-md shadow-sky-950'
+                : 'text-slate-400 hover:text-white bg-slate-950 border border-slate-800'
+            }`}
+          >
+            2D Multispectral Satellite Radar
+          </button>
+          <button
+            onClick={() => setSubViewMode('3d-patterns')}
+            className={`px-4 py-2 rounded-xl font-bold flex items-center space-x-2 transition-all cursor-pointer ${
+              subViewMode === '3d-patterns'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950'
+                : 'text-slate-400 hover:text-white bg-slate-950 border border-slate-800'
+            }`}
+          >
+            <Wind className="w-4 h-4 text-emerald-300 animate-pulse" />
+            <span>Real-Time 3D Weather Pattern & Pollution (CO2/CH4)</span>
+            <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-900 text-emerald-300 border border-emerald-800 font-mono">
+              3D & GPS
+            </span>
+          </button>
+        </div>
+
+        <span className="text-[11px] text-slate-500 hidden sm:inline">
+          {subViewMode === '3d-patterns' ? 'Active: WebGL 3D Planetary Sphere with Atmospheric Streamlines & Gas Plumes' : 'Active: Himawari-9 & Polar Orbiting Radiometers'}
+        </span>
+      </div>
+
+      {subViewMode === '3d-patterns' ? (
+        <WeatherPollution3DModel />
+      ) : (
+        <>
+          {/* Microsoft Graph API OneDrive Account & Sync Panel */}
       <div className="bg-slate-900 border border-sky-800/80 rounded-2xl p-4 font-mono text-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
           <div className="flex items-center space-x-2">
@@ -1189,6 +1229,8 @@ ${aiReport || 'No AI analysis run yet. Trigger analysis in the SaliBuoy Satellit
           )}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };
