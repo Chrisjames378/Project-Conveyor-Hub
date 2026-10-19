@@ -2,6 +2,8 @@ export type ActiveTab =
   | 'landing'
   | 'overview' 
   | 'ocean-boys-fleet'
+  | 'mesh-ai'
+  | 'wind-turbine-3d'
   | 'weather-pollution-3d'
   | 'oceania-observatory'
   | 'global-climate'
@@ -350,3 +352,77 @@ export interface FleetUnitEconomics {
   carbonPricePerTonUSD: number;
   usefulLifeYears: number;
 }
+
+// ==========================================
+// MESH AI - 3D APP FOR MODELING & 3D PRINTING
+// ==========================================
+
+export type MeshAIPrimitiveType = 
+  | 'box' 
+  | 'sphere' 
+  | 'cylinder' 
+  | 'cone' 
+  | 'torus' 
+  | 'capsule' 
+  | 'wedge' 
+  | 'buoy-casing' 
+  | 'impeller' 
+  | 'drone-chassis'
+  | 'calibration-cube'
+  | 'low-poly-character'
+  | 'custom-ai';
+
+export type SculptBrushType = 
+  | 'clay' 
+  | 'smooth' 
+  | 'inflate' 
+  | 'deflate' 
+  | 'flatten' 
+  | 'pinch' 
+  | 'grab' 
+  | 'paint';
+
+export type MaterialPresetType = 
+  | 'matte-pla' 
+  | 'glossy-resin' 
+  | 'metallic-titanium' 
+  | 'cyber-lowpoly' 
+  | 'clay-matcap' 
+  | 'marine-protective'
+  | 'neon-wire';
+
+export interface MeshAIObject {
+  id: string;
+  name: string;
+  type: MeshAIPrimitiveType;
+  dimensions: { x: number; y: number; z: number }; // Dimensions in mm
+  position: { x: number; y: number; z: number };
+  rotation: { x: number; y: number; z: number }; // In radians
+  scale: { x: number; y: number; z: number };
+  color: string;
+  materialPreset: MaterialPresetType;
+  roughness: number;
+  metalness: number;
+  visible: boolean;
+  locked: boolean;
+  wireframe: boolean;
+  vertexCount: number;
+  faceCount: number;
+  aiPrompt?: string;
+  isBase64Mesh?: boolean;
+}
+
+export interface Print3DSliceMetrics {
+  bedDimensionsMm: { x: number; y: number; z: number };
+  modelDimensionsMm: { x: number; y: number; z: number };
+  volumeCm3: number;
+  estimatedWeightGrams: number;
+  filamentType: 'PLA' | 'PETG' | 'ABS' | 'Resin';
+  infillPct: number;
+  layerHeightMm: number;
+  estimatedPrintTimeMinutes: number;
+  isWithinBuildVolume: boolean;
+  overhangRiskCount: number;
+  isWatertightManifold: boolean;
+}
+

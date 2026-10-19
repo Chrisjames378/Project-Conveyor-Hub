@@ -1,10 +1,10 @@
 import { BOMItem, FundingLead, PitchSlide } from '../types';
 
 /**
- * Downloads a string content as a downloadable file
+ * Downloads string content or Blob as a downloadable file
  */
-export function downloadFile(content: string, fileName: string, contentType: string) {
-  const blob = new Blob([content], { type: contentType });
+export function downloadFile(content: string | Blob, fileName: string, contentType: string = 'application/octet-stream') {
+  const blob = content instanceof Blob ? content : new Blob([content], { type: contentType });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

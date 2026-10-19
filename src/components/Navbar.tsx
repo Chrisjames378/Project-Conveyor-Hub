@@ -41,6 +41,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
     { id: 'landing', label: 'Investor Landing', icon: <Globe2 className="w-4 h-4 text-emerald-400" />, badge: 'PUBLIC' },
     { id: 'overview', label: 'Overview & AMOC', icon: <Compass className="w-4 h-4" /> },
     { id: 'ocean-boys-fleet', label: 'Ocean Boys & Real-Time Satellites', icon: <Radio className="w-4 h-4 text-teal-400 animate-pulse" />, badge: '23 BOYS • LIVE SAT' },
+    { id: 'mesh-ai', label: 'Mesh AI - 3D Sculpt & Print', icon: <Box className="w-4 h-4 text-amber-400 animate-pulse" />, badge: 'AI • SCULPT • STL' },
+    { id: 'wind-turbine-3d', label: 'Wind Turbine 3D (Weather & Snow)', icon: <Wind className="w-4 h-4 text-sky-400 animate-pulse" />, badge: '3D • SNOW' },
     { id: 'weather-pollution-3d', label: '3D Weather & Pollution (CO2/CH4)', icon: <Wind className="w-4 h-4 text-emerald-400 animate-pulse" />, badge: '3D • CO2 • CH4' },
     { id: 'oceania-observatory', label: 'Oceania & Polar Observatory', icon: <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />, badge: '3D LIVE' },
     { id: 'global-climate', label: 'Global Climate & NOAA SST', icon: <Thermometer className="w-4 h-4 text-rose-400" />, badge: 'NOAA CRW' },

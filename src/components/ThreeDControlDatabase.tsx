@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ThreeDSubsystem } from '../types';
+import { ThreeDSubsystem, ActiveTab } from '../types';
 import { 
   Box, 
   Layers, 
@@ -26,7 +26,8 @@ import {
   HelpCircle,
   BarChart3,
   Thermometer,
-  Gauge
+  Gauge,
+  Sparkles
 } from 'lucide-react';
 import { downloadFile } from '../utils/exportUtils';
 
@@ -159,7 +160,11 @@ const INITIAL_3D_SUBSYSTEMS: ThreeDSubsystem[] = [
   }
 ];
 
-export const ThreeDControlDatabase: React.FC = () => {
+interface ThreeDControlProps {
+  setActiveTab?: (tab: ActiveTab) => void;
+}
+
+export const ThreeDControlDatabase: React.FC<ThreeDControlProps> = ({ setActiveTab }) => {
   const [subsystems, setSubsystems] = useState<ThreeDSubsystem[]>(INITIAL_3D_SUBSYSTEMS);
   const [selectedSubsystemId, setSelectedSubsystemId] = useState<string>('sub-01');
   const [modalSubsystem, setModalSubsystem] = useState<ThreeDSubsystem | null>(null);
@@ -514,13 +519,35 @@ export const ThreeDControlDatabase: React.FC = () => {
             </p>
           </div>
 
-          <button
-            onClick={export3DDatabaseCSV}
-            className="inline-flex items-center space-x-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-mono cursor-pointer transition-colors self-start sm:self-auto"
-          >
-            <Download className="w-3.5 h-3.5 text-sky-400" />
-            <span>Export CAD & Ice Yield CSV</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            {setActiveTab && (
+              <>
+                <button
+                  onClick={() => setActiveTab('wind-turbine-3d')}
+                  className="inline-flex items-center space-x-2 px-3.5 py-2 bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-500 hover:to-sky-600 text-white rounded-xl text-xs font-mono font-bold cursor-pointer transition-all shadow-md shadow-sky-950/60"
+                >
+                  <Wind className="w-3.5 h-3.5 text-sky-200" />
+                  <span>Wind Turbine 3D & Snow Simulator</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('mesh-ai')}
+                  className="inline-flex items-center space-x-2 px-3.5 py-2 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white rounded-xl text-xs font-mono font-bold cursor-pointer transition-all shadow-md shadow-amber-950/60"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+                  <span>Open in Mesh AI (STL)</span>
+                </button>
+              </>
+            )}
+
+            <button
+              onClick={export3DDatabaseCSV}
+              className="inline-flex items-center space-x-2 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-mono cursor-pointer transition-colors"
+            >
+              <Download className="w-3.5 h-3.5 text-sky-400" />
+              <span>Export CAD & Ice Yield CSV</span>
+            </button>
+          </div>
         </div>
       </div>
 

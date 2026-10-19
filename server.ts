@@ -608,6 +608,60 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
     }
   });
 
+  // Mesh AI - 3D Model Generation & 3D Print Preparation API
+  app.post("/api/mesh-ai/generate", async (req, res) => {
+    try {
+      const { prompt = "Ocean Boy Buoy Sensor Casing", imageReference } = req.body || {};
+      const p = (prompt as string).toLowerCase();
+
+      let modelType = "buoy-casing";
+      let dimensions = { x: 70, y: 140, z: 70 };
+      let color = "#f97316";
+      let printRecommendations = {
+        filament: "PLA",
+        infillPct: 20,
+        supportRequired: false,
+        nozzleTempC: 210,
+        bedTempC: 60,
+        estimatedPrintTimeMinutes: 180
+      };
+
+      if (p.includes("turbine") || p.includes("impeller") || p.includes("propeller") || p.includes("rotor")) {
+        modelType = "impeller";
+        dimensions = { x: 80, y: 25, z: 80 };
+        color = "#06b6d4";
+        printRecommendations.supportRequired = true;
+        printRecommendations.infillPct = 35;
+      } else if (p.includes("drone") || p.includes("submarine") || p.includes("auv")) {
+        modelType = "drone-chassis";
+        dimensions = { x: 50, y: 150, z: 50 };
+        color = "#10b981";
+        printRecommendations.supportRequired = true;
+      } else if (p.includes("calibration") || p.includes("cube") || p.includes("test")) {
+        modelType = "calibration-cube";
+        dimensions = { x: 40, y: 40, z: 40 };
+        color = "#3b82f6";
+        printRecommendations.infillPct = 15;
+      } else if (p.includes("character") || p.includes("mascot")) {
+        modelType = "low-poly-character";
+        dimensions = { x: 50, y: 90, z: 40 };
+        color = "#ec4899";
+        printRecommendations.supportRequired = true;
+      }
+
+      return res.json({
+        success: true,
+        modelType,
+        dimensions,
+        color,
+        printRecommendations,
+        timestamp: new Date().toISOString()
+      });
+    } catch (err: any) {
+      return res.status(500).json({ error: "Failed to generate Mesh AI model", details: err?.message });
+    }
+  });
+
   // SSE Live Streaming Polar Satellite Analysis Route
   app.get('/api/stream-polar-analysis', async (req, res) => {
     const { date, region } = req.query;
