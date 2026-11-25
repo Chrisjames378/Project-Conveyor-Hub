@@ -215,6 +215,11 @@ export const WindTurbinePlatform3D: React.FC = () => {
   const deploymentSpeedRef = useRef<number>(1);
   const isDeploymentLoopingRef = useRef<boolean>(false);
   const activeTabModeRef = useRef<string>('how-it-works');
+  const deploymentProgressRef = useRef<number>(0);
+
+  useEffect(() => {
+    deploymentProgressRef.current = deploymentProgress;
+  }, [deploymentProgress]);
 
   useEffect(() => {
     isDeployingAnimationPlayingRef.current = isDeployingAnimationPlaying;
@@ -698,10 +703,11 @@ export const WindTurbinePlatform3D: React.FC = () => {
 
         // In deployment mode, rotor only starts spinning in Stage 5 (80% - 100%)
         if (activeTabModeRef.current === 'deployment') {
-          if (deploymentProgress < 80) {
+          const curProgress = deploymentProgressRef.current;
+          if (curProgress < 80) {
             currentRpm = 0;
           } else {
-            currentRpm = Math.round(currentRpm * ((deploymentProgress - 80) / 20));
+            currentRpm = Math.round(currentRpm * ((curProgress - 80) / 20));
           }
         }
 

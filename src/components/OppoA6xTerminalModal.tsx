@@ -19,10 +19,14 @@ import {
   Globe2,
   ExternalLink,
   Bell,
-  Waves
+  Waves,
+  ShieldCheck,
+  AlertTriangle,
+  ShieldAlert
 } from 'lucide-react';
 import { INITIAL_OCEAN_BOYS } from '../db/oceanBoysFleet';
 import { OceanBoy } from '../types';
+import { computeFleetHealthStats, classifyBuoyHealth } from '../utils/fleetHealth';
 
 export interface OppoA6xTerminalModalProps {
   isOpen: boolean;
@@ -68,6 +72,8 @@ export const OppoA6xTerminalModal: React.FC<OppoA6xTerminalModalProps> = ({
   if (!isOpen) return null;
 
   const currentBuoy = buoyList.find(b => b.id === selectedBuoyId) || buoyList[0];
+  const fleetHealth = computeFleetHealthStats(buoyList);
+  const currentBuoyHealth = classifyBuoyHealth(currentBuoy);
 
   const handleFieldPulse = () => {
     setIsPinging(true);
@@ -169,12 +175,57 @@ export const OppoA6xTerminalModal: React.FC<OppoA6xTerminalModalProps> = ({
                 {/* SCREEN 1: BUOY TELEMETRY & FIELD PINGER */}
                 {activeScreen === 'field-pinger' && (
                   <div className="space-y-2">
-                    <div className="p-2 bg-slate-950 rounded-xl border border-teal-800/60">
-                      <div className="flex justify-between items-center text-[9px]">
-                        <span className="text-teal-400 font-bold truncate max-w-[120px]">{currentBuoy.name}</span>
-                        <span className="text-emerald-400 font-bold">{currentBuoy.status}</span>
+                    {/* FLEET HEALTH SUMMARY WIDGET ON OPPO A6X SCREEN */}
+                    <div className="p-2 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5">
+                      <div className="flex items-center justify-between text-[8px]">
+                        <span className="text-slate-300 font-bold uppercase tracking-wider">FLEET HEALTH ({fleetHealth.total} BUOYS)</span>
+                        <span className="text-teal-300 font-bold tabular-nums">LIVE TELEMETRY</span>
                       </div>
-                      <div className="text-[8px] text-slate-400 truncate">{currentBuoy.region}</div>
+
+                      {/* Segmented Bar */}
+                      <div className="w-full h-1.5 rounded-full bg-slate-900 overflow-hidden flex border border-slate-800">
+                        <div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${fleetHealth.optimalPct}%` }} />
+                        <div className="h-full bg-amber-500 transition-all duration-500" style={{ width: `${fleetHealth.degradedPct}%` }} />
+                        <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${fleetHealth.criticalPct}%` }} />
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-1 text-center">
+                        <div className="p-1 bg-slate-900 rounded-lg border border-emerald-900/60">
+                          <div className="text-[7px] text-emerald-400 font-bold uppercase">Optimal</div>
+                          <div className="text-[10px] font-extrabold text-white tabular-nums">{fleetHealth.optimalPct.toFixed(1)}%</div>
+                          <div className="text-[7px] text-slate-400 tabular-nums">{fleetHealth.optimalCount}/{fleetHealth.total}</div>
+                        </div>
+                        <div className="p-1 bg-slate-900 rounded-lg border border-amber-900/60">
+                          <div className="text-[7px] text-amber-400 font-bold uppercase">Degraded</div>
+                          <div className="text-[10px] font-extrabold text-white tabular-nums">{fleetHealth.degradedPct.toFixed(1)}%</div>
+                          <div className="text-[7px] text-slate-400 tabular-nums">{fleetHealth.degradedCount}/{fleetHealth.total}</div>
+                        </div>
+                        <div className="p-1 bg-slate-900 rounded-lg border border-rose-900/60">
+                          <div className="text-[7px] text-rose-400 font-bold uppercase">Critical</div>
+                          <div className="text-[10px] font-extrabold text-white tabular-nums">{fleetHealth.criticalPct.toFixed(1)}%</div>
+                          <div className="text-[7px] text-slate-400 tabular-nums">{fleetHealth.criticalCount}/{fleetHealth.total}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-2 bg-slate-950 rounded-xl border border-teal-800/60 space-y-1">
+                      <div className="flex justify-between items-center text-[9px]">
+                        <span className="text-teal-400 font-bold truncate max-w-[115px]">{currentBuoy.name}</span>
+                        <span className={`inline-flex items-center space-x-0.5 px-1.5 py-0.2 rounded text-[8px] font-bold border ${
+                          currentBuoyHealth === 'Critical'
+                            ? 'bg-rose-950 text-rose-300 border-rose-700'
+                            : currentBuoyHealth === 'Degraded'
+                              ? 'bg-amber-950 text-amber-300 border-amber-700'
+                              : 'bg-emerald-950 text-emerald-300 border-emerald-700'
+                        }`}>
+                          {currentBuoyHealth === 'Critical' ? <ShieldAlert className="w-2.5 h-2.5" /> : currentBuoyHealth === 'Degraded' ? <AlertTriangle className="w-2.5 h-2.5" /> : <ShieldCheck className="w-2.5 h-2.5" />}
+                          <span>{currentBuoyHealth}</span>
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-[8px] text-slate-400">
+                        <span className="truncate max-w-[140px]">{currentBuoy.region}</span>
+                        <span className="text-emerald-400 font-bold tabular-nums">Bat: {currentBuoy.batteryPct}%</span>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-1.5 text-[9px]">

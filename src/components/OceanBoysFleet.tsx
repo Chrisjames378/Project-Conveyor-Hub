@@ -41,7 +41,10 @@ import {
   Navigation,
   Wind,
   Box,
-  Sun
+  Sun,
+  ShieldCheck,
+  ShieldAlert,
+  BrainCircuit
 } from 'lucide-react';
 import { INITIAL_OCEAN_BOYS, SATELLITE_CONSTELLATIONS } from '../db/oceanBoysFleet';
 import { OceanBoy, SatelliteFrame, ActiveTab } from '../types';
@@ -51,6 +54,11 @@ import { SmsAlertsModal } from './SmsAlertsModal';
 import { WeatherPollution3DModel } from './WeatherPollution3DModel';
 import { downloadFile } from '../utils/exportUtils';
 import { 
+  computeFleetHealthStats, 
+  classifyBuoyHealth, 
+  BuoyHealthState 
+} from '../utils/fleetHealth';
+import { 
   pollSatelliteNetwork, 
   PollingNetworkStats, 
   DownlinkEventLog 
@@ -58,12 +66,23 @@ import {
 
 interface OceanBoysFleetProps {
   setActiveTab?: (tab: ActiveTab) => void;
+  buoys?: OceanBoy[];
+  setBuoys?: React.Dispatch<React.SetStateAction<OceanBoy[]>>;
+  superintendentGen?: number;
 }
 
-export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
-  const [buoys, setBuoys] = useState<OceanBoy[]>(INITIAL_OCEAN_BOYS);
+export function OceanBoysFleet({
+  setActiveTab,
+  buoys: externalBuoys,
+  setBuoys: externalSetBuoys,
+  superintendentGen = 2
+}: OceanBoysFleetProps = {}) {
+  const [internalBuoys, setInternalBuoys] = useState<OceanBoy[]>(INITIAL_OCEAN_BOYS);
+  const buoys = externalBuoys ?? internalBuoys;
+  const setBuoys = externalSetBuoys ?? setInternalBuoys;
   const [selectedBuoyId, setSelectedBuoyId] = useState<string>('ocean-boy-1');
   const [filterCategory, setFilterCategory] = useState<string>('All');
+  const [healthFilter, setHealthFilter] = useState<'All' | BuoyHealthState>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   
   // Dashboard Visual View Modes:
@@ -310,14 +329,18 @@ export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
     }, 800);
   };
 
+  // Fleet Health Summary Stats (Optimal, Degraded, Critical)
+  const fleetHealth = computeFleetHealthStats(buoys);
+
   // Filtered List for Views
   const filteredBuoys = buoys.filter(b => {
     const matchesCategory = filterCategory === 'All' || b.category === filterCategory;
+    const matchesHealth = healthFilter === 'All' || classifyBuoyHealth(b) === healthFilter;
     const matchesSearch = searchQuery === '' || 
       b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.nickname.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.region.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesCategory && matchesHealth && matchesSearch;
   });
 
   // Export Full Telemetry Data
@@ -362,28 +385,26 @@ export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
     <div className="space-y-6">
       
       {/* SECTION 1: TOP LIVE STREAMING COMMAND HEADER */}
-      <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-teal-950/70 border border-teal-800/40 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
+      <div className="bg-[#060f1f]/95 border border-slate-800/90 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-teal-500/20 border border-teal-500/40 text-teal-400">
+              <span className="p-1.5 rounded-lg bg-teal-500/15 border border-teal-500/40 text-teal-400">
                 <Anchor className="w-5 h-5" />
               </span>
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-mono uppercase">
-                THE OCEAN BOYS & REAL-TIME SATELLITE FLEET
+              <h1 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-white">
+                Ocean Boys &amp; Real-Time Satellite Fleet
               </h1>
-              <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-teal-950 text-teal-300 border border-teal-800 rounded">
-                23 BOYS DEPLOYED
+              <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-teal-950 text-teal-300 border border-teal-800 rounded tabular-nums">
+                23 DEPLOYED
               </span>
-              <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-600/60 text-emerald-300 text-[10px] font-mono font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>DYNAMIC POLLING STREAM ACTIVE</span>
-              </div>
+              <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-[10px] font-mono font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>STREAMING</span>
+              </span>
             </div>
             <p className="text-xs text-slate-300 font-sans max-w-3xl leading-relaxed">
-              Continuous live multispectral orbital surveillance monitoring every deployed <strong>Ocean Boy</strong> across New Zealand, the Southern Ocean, and Global Convection Basins. Polling mechanism delivers frame downlinks from Himawari-9, NOAA GOES-18, Sentinel-3, and Aqua MODIS.
+              Live multispectral orbital surveillance monitoring every deployed <strong>Ocean Boy</strong> across New Zealand, the Southern Ocean, and Global Convection Basins with Himawari-9, NOAA GOES-18, Sentinel-3, and Aqua MODIS downlinks.
             </p>
           </div>
 
@@ -395,23 +416,20 @@ export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
                 setActiveBuoyForOppo(selectedBuoyId);
                 setIsOppoModalOpen(true);
               }}
-              className="inline-flex items-center space-x-2 px-3.5 py-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white rounded-xl font-bold shadow-md transition-all cursor-pointer"
+              className="inline-flex items-center space-x-2 px-3.5 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold transition-colors cursor-pointer"
             >
               <Smartphone className="w-4 h-4 text-white" />
-              <span>Oppo A6x Field Terminal</span>
-              <span className="px-1.5 py-0.2 bg-teal-900/60 text-white text-[9px] rounded font-bold">
-                90Hz
-              </span>
+              <span>Oppo A6x Terminal</span>
             </button>
 
             {/* SMS Alerts for Anonymous Info & Maritime Intel */}
             <button
               onClick={() => setIsSmsAlertsOpen(true)}
-              className="inline-flex items-center space-x-2 px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-bold shadow-md transition-all cursor-pointer"
+              className="inline-flex items-center space-x-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 rounded-xl font-bold transition-colors cursor-pointer"
               title="SMS Notification Alerts for anonymous information & drift"
             >
-              <Bell className="w-4 h-4 text-emerald-200 animate-bounce" />
-              <span>SMS Alerts: Anonymous Intel</span>
+              <Bell className="w-4 h-4" />
+              <span>SMS Alerts</span>
             </button>
 
             {/* Audio Ping Toggle */}
@@ -725,6 +743,139 @@ export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-8 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-teal-500 w-full sm:w-56"
           />
+        </div>
+      </div>
+
+      {/* FLEET HEALTH SUMMARY STATS WIDGET (OPTIMAL / DEGRADED / CRITICAL) */}
+      <div className="bg-slate-900/95 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl font-mono space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center space-x-2">
+            <Activity className="w-4 h-4 text-teal-400" />
+            <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">
+              Fleet Operational Health Summary
+            </h2>
+            <span className="text-[11px] text-slate-400 tabular-nums">
+              ({fleetHealth.total} Buoys Monitored)
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-[11px]">
+            {healthFilter !== 'All' && (
+              <button
+                onClick={() => setHealthFilter('All')}
+                className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 text-slate-300 hover:text-white cursor-pointer"
+              >
+                Show All States
+              </button>
+            )}
+            {setActiveTab && (
+              <button
+                onClick={() => setActiveTab('superintendent')}
+                className="px-2.5 py-1 rounded-lg bg-cyan-950/80 border border-cyan-700/70 text-cyan-300 hover:bg-cyan-900/70 flex items-center space-x-1 cursor-pointer tabular-nums"
+              >
+                <BrainCircuit className="w-3 h-3" />
+                <span>Interior Superintendent (Gen {superintendentGen}.0)</span>
+              </button>
+            )}
+            <button
+              onClick={() => setDashboardView('compact')}
+              className="px-2.5 py-1 rounded-lg bg-slate-950 border border-amber-700/60 text-amber-300 hover:bg-amber-950/60 flex items-center space-x-1 cursor-pointer"
+            >
+              <Smartphone className="w-3 h-3" />
+              <span>View on Oppo A6x</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Segmented Proportion Bar */}
+        <div className="w-full h-2.5 rounded-full bg-slate-950 border border-slate-800 overflow-hidden flex">
+          <div
+            className="h-full bg-emerald-500 transition-all duration-500"
+            style={{ width: `${fleetHealth.optimalPct}%` }}
+            title={`Optimal: ${fleetHealth.optimalPct}%`}
+          />
+          <div
+            className="h-full bg-amber-500 transition-all duration-500"
+            style={{ width: `${fleetHealth.degradedPct}%` }}
+            title={`Degraded: ${fleetHealth.degradedPct}%`}
+          />
+          <div
+            className="h-full bg-rose-500 transition-all duration-500"
+            style={{ width: `${fleetHealth.criticalPct}%` }}
+            title={`Critical: ${fleetHealth.criticalPct}%`}
+          />
+        </div>
+
+        {/* 3 Health Tier Cards (Clickable Filter Triggers) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <button
+            type="button"
+            onClick={() => setHealthFilter(healthFilter === 'Optimal' ? 'All' : 'Optimal')}
+            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+              healthFilter === 'Optimal'
+                ? 'bg-emerald-950/70 border-emerald-500 ring-1 ring-emerald-400/50'
+                : 'bg-slate-950 border-slate-800 hover:border-emerald-700/70'
+            }`}
+          >
+            <div className="space-y-0.5">
+              <div className="flex items-center space-x-1.5 text-emerald-400 font-bold text-[11px] uppercase">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Optimal</span>
+              </div>
+              <div className="text-[10px] text-slate-400 tabular-nums">
+                {fleetHealth.optimalCount} of {fleetHealth.total} units nominal
+              </div>
+            </div>
+            <div className="text-xl font-extrabold text-emerald-300 tabular-nums">
+              {fleetHealth.optimalPct.toFixed(1)}%
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setHealthFilter(healthFilter === 'Degraded' ? 'All' : 'Degraded')}
+            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+              healthFilter === 'Degraded'
+                ? 'bg-amber-950/70 border-amber-500 ring-1 ring-amber-400/50'
+                : 'bg-slate-950 border-slate-800 hover:border-amber-700/70'
+            }`}
+          >
+            <div className="space-y-0.5">
+              <div className="flex items-center space-x-1.5 text-amber-400 font-bold text-[11px] uppercase">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                <span>Degraded</span>
+              </div>
+              <div className="text-[10px] text-slate-400 tabular-nums">
+                {fleetHealth.degradedCount} of {fleetHealth.total} low SoC / high swell
+              </div>
+            </div>
+            <div className="text-xl font-extrabold text-amber-300 tabular-nums">
+              {fleetHealth.degradedPct.toFixed(1)}%
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setHealthFilter(healthFilter === 'Critical' ? 'All' : 'Critical')}
+            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+              healthFilter === 'Critical'
+                ? 'bg-rose-950/70 border-rose-500 ring-1 ring-rose-400/50'
+                : 'bg-slate-950 border-slate-800 hover:border-rose-700/70'
+            }`}
+          >
+            <div className="space-y-0.5">
+              <div className="flex items-center space-x-1.5 text-rose-400 font-bold text-[11px] uppercase">
+                <ShieldAlert className="w-3.5 h-3.5" />
+                <span>Critical</span>
+              </div>
+              <div className="text-[10px] text-slate-400 tabular-nums">
+                {fleetHealth.criticalCount} of {fleetHealth.total} alert threshold
+              </div>
+            </div>
+            <div className="text-xl font-extrabold text-rose-300 tabular-nums">
+              {fleetHealth.criticalPct.toFixed(1)}%
+            </div>
+          </button>
         </div>
       </div>
 
@@ -1605,13 +1756,75 @@ export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
                 )}
               </div>
 
+              {/* Compact Fleet Health Summary Widget (Oppo A6x 20:9 Ready) */}
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3 mb-3 space-y-2.5">
+                <div className="flex items-center justify-between text-[10px]">
+                  <span className="text-slate-300 font-bold uppercase tracking-wider flex items-center space-x-1.5">
+                    <Activity className="w-3.5 h-3.5 text-teal-400" />
+                    <span>Fleet Health Stats</span>
+                  </span>
+                  <span className="text-slate-400 tabular-nums">{fleetHealth.total} Buoys</span>
+                </div>
+
+                {/* Segmented Proportion Bar */}
+                <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden flex border border-slate-800">
+                  <div className="h-full bg-emerald-500 transition-all duration-500" style={{ width: `${fleetHealth.optimalPct}%` }} />
+                  <div className="h-full bg-amber-500 transition-all duration-500" style={{ width: `${fleetHealth.degradedPct}%` }} />
+                  <div className="h-full bg-rose-500 transition-all duration-500" style={{ width: `${fleetHealth.criticalPct}%` }} />
+                </div>
+
+                <div className="grid grid-cols-3 gap-1.5 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setHealthFilter(healthFilter === 'Optimal' ? 'All' : 'Optimal')}
+                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                      healthFilter === 'Optimal'
+                        ? 'bg-emerald-950/80 border-emerald-500'
+                        : 'bg-slate-900 border-slate-800'
+                    }`}
+                  >
+                    <div className="text-[9px] text-emerald-400 font-bold uppercase">Optimal</div>
+                    <div className="text-sm font-extrabold text-white tabular-nums">{fleetHealth.optimalPct.toFixed(1)}%</div>
+                    <div className="text-[9px] text-slate-400 tabular-nums">{fleetHealth.optimalCount}/{fleetHealth.total}</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setHealthFilter(healthFilter === 'Degraded' ? 'All' : 'Degraded')}
+                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                      healthFilter === 'Degraded'
+                        ? 'bg-amber-950/80 border-amber-500'
+                        : 'bg-slate-900 border-slate-800'
+                    }`}
+                  >
+                    <div className="text-[9px] text-amber-400 font-bold uppercase">Degraded</div>
+                    <div className="text-sm font-extrabold text-white tabular-nums">{fleetHealth.degradedPct.toFixed(1)}%</div>
+                    <div className="text-[9px] text-slate-400 tabular-nums">{fleetHealth.degradedCount}/{fleetHealth.total}</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setHealthFilter(healthFilter === 'Critical' ? 'All' : 'Critical')}
+                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                      healthFilter === 'Critical'
+                        ? 'bg-rose-950/80 border-rose-500'
+                        : 'bg-slate-900 border-slate-800'
+                    }`}
+                  >
+                    <div className="text-[9px] text-rose-400 font-bold uppercase">Critical</div>
+                    <div className="text-sm font-extrabold text-white tabular-nums">{fleetHealth.criticalPct.toFixed(1)}%</div>
+                    <div className="text-[9px] text-slate-400 tabular-nums">{fleetHealth.criticalCount}/{fleetHealth.total}</div>
+                  </button>
+                </div>
+              </div>
+
               {/* Fleet Status Summary Counter */}
               <div className="flex items-center justify-between px-2 pb-2 text-[11px] text-slate-400 border-b border-slate-800/80 mb-3">
                 <div className="flex items-center space-x-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span className="text-white font-bold">{filteredBuoys.length} Stackable Buoy Cards</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span className="text-white font-bold tabular-nums">{filteredBuoys.length} Stackable Buoy Cards</span>
                 </div>
-                <span className="text-[10px] text-amber-400 font-bold">POLLING INTERVAL: {pollingIntervalSec}s</span>
+                <span className="text-[10px] text-amber-400 font-bold tabular-nums">POLL: {pollingIntervalSec}s</span>
               </div>
 
               {/* CSS GRID AUTO-FIT CONTAINER SPECIFICALLY TAILORED FOR OPPO A6X VIEWPORT (360-412px portrait / 720-800px landscape) */}
@@ -1624,6 +1837,7 @@ export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
                 {filteredBuoys.map(boy => {
                   const isSelected = boy.id === selectedBuoyId;
                   const isJustUpdated = recentlyUpdatedBuoyIds.has(boy.id);
+                  const buoyHealth = classifyBuoyHealth(boy);
 
                   return (
                     <div
@@ -1634,6 +1848,19 @@ export function OceanBoysFleet({ setActiveTab }: OceanBoysFleetProps = {}) {
                           : 'bg-slate-900/90 border-slate-800 hover:border-slate-700'
                       } ${isJustUpdated ? 'ring-1 ring-emerald-400' : ''}`}
                     >
+                      <div className="flex items-center justify-between text-[10px] pb-1 border-b border-slate-800/70">
+                        <span className="text-slate-400">TELEMETRY STATE</span>
+                        <span className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded font-bold border ${
+                          buoyHealth === 'Critical'
+                            ? 'bg-rose-950/80 text-rose-300 border-rose-700'
+                            : buoyHealth === 'Degraded'
+                              ? 'bg-amber-950/80 text-amber-300 border-amber-700'
+                              : 'bg-emerald-950/80 text-emerald-300 border-emerald-700'
+                        }`}>
+                          {buoyHealth === 'Critical' ? <ShieldAlert className="w-3 h-3" /> : buoyHealth === 'Degraded' ? <AlertTriangle className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
+                          <span>{buoyHealth}</span>
+                        </span>
+                      </div>
                       {/* Card Header: Buoy Name, Status Badge & Pass Timing */}
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="space-y-0.5 min-w-0 max-w-[200px] sm:max-w-none">

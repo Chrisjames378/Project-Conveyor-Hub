@@ -1,135 +1,196 @@
 import React from 'react';
-import { ActiveTab } from '../types';
-import { 
-  Waves, 
-  Compass, 
-  TrendingUp, 
-  ShieldCheck, 
-  ArrowRight, 
-  DollarSign, 
-  CheckCircle2, 
+import { ActiveTab, OceanBoy, SuperintendentState } from '../types';
+import { INITIAL_OCEAN_BOYS } from '../db/oceanBoysFleet';
+import { computeFleetHealthStats } from '../utils/fleetHealth';
+import { computeIntelligenceMetrics, getUnlockedCapabilityForMonth } from '../services/superintendentEngine';
+import {
+  Waves,
+  Compass,
+  TrendingUp,
+  ShieldCheck,
+  ArrowRight,
+  DollarSign,
+  CheckCircle2,
   AlertTriangle,
   Layers,
   Thermometer,
   Zap,
   Building2,
-  Globe
+  Globe,
+  BrainCircuit,
+  Activity
 } from 'lucide-react';
 import { AmocSummaryOneDriveToggle } from './AmocSummaryOneDriveToggle';
 import { SyncToGitHub } from './SyncToGitHub';
 
 interface DashboardProps {
   setActiveTab: (tab: ActiveTab) => void;
+  buoys?: OceanBoy[];
+  superintendentState?: SuperintendentState;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
-  return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950 p-6 md:p-8 border border-sky-900/40 shadow-2xl">
-        <div className="absolute -right-20 -top-20 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div className="relative z-10 max-w-4xl space-y-4">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-950/80 border border-sky-800 text-sky-300 text-xs font-mono">
-            <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
-            <span>Auckland DeepTech Climate Initiative • New Zealand</span>
-          </div>
-          
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            SaliBuoy Systems <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-emerald-400">Project Conveyor</span>
-          </h1>
-          
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
-            A hardware-first oceanographic intervention platform engineered in New Zealand to stabilize the Atlantic Meridional Overturning Circulation (AMOC) through autonomous subsurface salinity pumping and polar cryo-restoration.
-          </p>
+export const Dashboard: React.FC<DashboardProps> = ({
+  setActiveTab,
+  buoys = INITIAL_OCEAN_BOYS,
+  superintendentState
+}) => {
+  const fleetHealth = computeFleetHealthStats(buoys);
+  const suptGen = superintendentState?.generation ?? 2;
+  const suptMetrics = computeIntelligenceMetrics(suptGen);
 
-          <div className="pt-2 flex flex-wrap gap-3">
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Mission Control Header */}
+      <div className="rounded-2xl bg-[#060f1f]/95 p-6 md:p-7 border border-slate-800/90 shadow-2xl space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-2 max-w-3xl">
+            <div className="inline-flex items-center space-x-2 text-xs font-mono text-sky-400 uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+              <span>Auckland DeepTech Climate Initiative • New Zealand</span>
+            </div>
+
+            <h1 className="font-display text-2xl sm:text-4xl font-bold text-white tracking-tight">
+              SaliBuoy Systems <span className="text-sky-400">Mission Overview</span>
+            </h1>
+
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+              Hardware-first oceanographic intervention platform engineered in Pukekohe to stabilize Atlantic Meridional Overturning Circulation (AMOC) via autonomous subsurface salinity pumping.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2.5 shrink-0">
             <button
+              type="button"
               onClick={() => setActiveTab('global-climate')}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 via-teal-500 to-emerald-600 hover:from-sky-400 hover:to-emerald-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-sky-950/80 transition-all duration-200 cursor-pointer"
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-colors cursor-pointer"
             >
               <Globe className="w-4 h-4" />
-              <span>Global Climate & NOAA SST</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <span>Global Climate &amp; SST</span>
             </button>
 
             <button
-              onClick={() => setActiveTab('nz-business')}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-sky-400 border border-sky-800/80 font-semibold text-xs sm:text-sm transition-all duration-200 cursor-pointer"
-            >
-              <Building2 className="w-4 h-4" />
-              <span>NZ Sole Trader & Business Setup</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </button>
-
-            <button
-              onClick={() => setActiveTab('funding')}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-xs sm:text-sm transition-all duration-200 cursor-pointer"
-            >
-              <DollarSign className="w-4 h-4 text-emerald-400" />
-              <span>View 12-Mo NZ Funding Pipeline</span>
-            </button>
-
-            <button
+              type="button"
               onClick={() => setActiveTab('hardware')}
-              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-sky-300 border border-sky-800/60 font-semibold text-xs sm:text-sm transition-all duration-200 cursor-pointer"
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-xs transition-colors cursor-pointer"
             >
               <Layers className="w-4 h-4 text-sky-400" />
-              <span>AMOC Hardware Roadmap</span>
+              <span>Hardware Roadmap</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('funding')}
+              className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-700 font-semibold text-xs transition-colors cursor-pointer"
+            >
+              <DollarSign className="w-4 h-4 text-emerald-400" />
+              <span>NZ Funding</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* KPI Stats Grid */}
+      {/* KPI Telemetry Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-sky-800/60 transition-colors">
+        <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">AMOC Transport</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">AMOC Transport</span>
             <Waves className="w-4 h-4 text-sky-400" />
           </div>
-          <div className="flex items-baseline space-x-2">
-            <span className="text-2xl font-bold text-white font-mono">15.2 Sv</span>
-            <span className="text-xs text-rose-400 font-mono font-medium">-15.5% vs baseline</span>
+          <div className="flex items-baseline space-x-2 font-mono tabular-nums">
+            <span className="text-2xl font-bold text-white">15.2 Sv</span>
+            <span className="text-xs text-rose-400 font-semibold">-15.5% baseline</span>
           </div>
           <p className="text-[11px] text-slate-400">Baseline 18.0 Sverdrups (1 Sv = 1M m³/s)</p>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-teal-800/60 transition-colors">
+        <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">Target Salinity Injection</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">Target Salinity</span>
             <Thermometer className="w-4 h-4 text-teal-400" />
           </div>
-          <div className="flex items-baseline space-x-2">
-            <span className="text-2xl font-bold text-teal-300 font-mono">45.0 PSU</span>
-            <span className="text-xs text-emerald-400 font-mono font-medium">+10 PSU Density</span>
+          <div className="flex items-baseline space-x-2 font-mono tabular-nums">
+            <span className="text-2xl font-bold text-teal-300">45.0 PSU</span>
+            <span className="text-xs text-emerald-400 font-semibold">+10 PSU Density</span>
           </div>
           <p className="text-[11px] text-slate-400">Forces localized subsea water sinking</p>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-emerald-800/60 transition-colors">
+        <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">12-Mo Funding Target</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">12-Mo Seed Target</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="flex items-baseline space-x-2">
-            <span className="text-2xl font-bold text-white font-mono">$1.5M NZD</span>
-            <span className="text-xs text-emerald-400 font-mono font-medium">$600k Non-dilutive</span>
+          <div className="flex items-baseline space-x-2 font-mono tabular-nums">
+            <span className="text-2xl font-bold text-white">$1.5M NZD</span>
+            <span className="text-xs text-emerald-400 font-semibold">$600k Grant</span>
           </div>
-          <p className="text-[11px] text-slate-400">VC Seed + Callaghan R&D 40% rebate</p>
+          <p className="text-[11px] text-slate-400">VC Seed + Callaghan R&amp;D 40% rebate</p>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-amber-800/60 transition-colors">
+        <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">Hardware Status</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">Prototype Phase</span>
             <Zap className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="flex items-baseline space-x-2">
-            <span className="text-2xl font-bold text-amber-300 font-mono">Mark-II Testing</span>
-            <span className="text-xs text-sky-400 font-mono font-medium">75% Complete</span>
+          <div className="flex items-baseline space-x-2 font-mono tabular-nums">
+            <span className="text-2xl font-bold text-amber-300">Mark-II</span>
+            <span className="text-xs text-sky-400 font-semibold">75% Complete</span>
           </div>
           <p className="text-[11px] text-slate-400">Next: Mark-III Hauraki Gulf ocean trial</p>
+        </div>
+      </div>
+
+      {/* Interior Superintendent & Live Fleet Health Command Strip */}
+      <div className="bg-[#060f1f]/95 border border-cyan-900/50 rounded-2xl p-5 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+            <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700 font-bold tabular-nums">
+              <BrainCircuit className="w-3.5 h-3.5" />
+              <span>INTERIOR SUPERINTENDENT • GEN {suptGen}.0</span>
+            </span>
+            <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold tabular-nums">
+              {suptMetrics.anomalyPrecisionPct}% PRECISION • +{suptMetrics.amocEfficiencyGainPct}% YIELD
+            </span>
+            <span className="text-[11px] text-slate-400">
+              Monthly Auto-Upgrade: {superintendentState?.autoUpgradeMonthly !== false ? 'Enabled' : 'Paused'}
+            </span>
+          </div>
+          <h3 className="text-base font-bold text-white">
+            Active Monthly Intelligence: {getUnlockedCapabilityForMonth(suptGen)}
+          </h3>
+          <p className="text-xs font-mono text-slate-400 tabular-nums">
+            Live Fleet ({fleetHealth.total} Buoys):{' '}
+            <span className="text-emerald-300 font-bold">{fleetHealth.optimalPct.toFixed(1)}% Optimal</span> •{' '}
+            <span className="text-amber-300 font-bold">{fleetHealth.degradedPct.toFixed(1)}% Degraded</span> •{' '}
+            <span className="text-rose-300 font-bold">{fleetHealth.criticalPct.toFixed(1)}% Critical</span>
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 font-mono text-xs shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveTab('superintendent')}
+            className="px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold flex items-center space-x-1.5 cursor-pointer transition-colors"
+          >
+            <BrainCircuit className="w-4 h-4" />
+            <span>Open Superintendent</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('ocean-boys-fleet')}
+            className="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-teal-300 font-bold flex items-center space-x-1.5 cursor-pointer transition-colors"
+          >
+            <Activity className="w-4 h-4" />
+            <span>Fleet Health</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('eco-impact')}
+            className="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-emerald-300 font-bold flex items-center space-x-1.5 cursor-pointer transition-colors"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>Risk Sim</span>
+          </button>
         </div>
       </div>
 
@@ -139,12 +200,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       {/* GitHub Sync Octokit Utility */}
       <SyncToGitHub />
 
-      {/* Mechanics & Physics of AMOC Stabilization */}
+      {/* Mechanics & Action Launchpad */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Mechanics Card */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-6 space-y-4">
+        <div className="bg-[#060f1f]/90 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-sky-950 rounded-lg text-sky-400 border border-sky-800/50">
+            <div className="p-2 bg-sky-950 rounded-lg text-sky-400 border border-sky-800/60">
               <Compass className="w-5 h-5" />
             </div>
             <div>
@@ -154,83 +214,86 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           </div>
 
           <div className="space-y-3 text-xs text-slate-300 leading-relaxed">
-            <div className="p-3 bg-rose-950/30 border border-rose-900/40 rounded-lg space-y-1">
+            <div className="p-3.5 bg-rose-950/25 border border-rose-900/50 rounded-xl space-y-1">
               <div className="flex items-center space-x-2 text-rose-300 font-semibold">
                 <AlertTriangle className="w-4 h-4" />
-                <span>The Threat: Freshwater Melt Dilution</span>
+                <span>Freshwater Melt Dilution Threat</span>
               </div>
               <p className="text-slate-400">
-                Accelerating Greenland ice sheet melting pours massive volumes of zero-salinity freshwater into the North Atlantic. Lower salinity lowers water density, preventing ocean water from sinking—which stalls the global AMOC conveyor belt.
+                Greenland ice sheet meltwater dilutes North Atlantic salinity, lowering water density and stalling natural deep-water sinking that drives the global heat conveyor.
               </p>
             </div>
 
-            <div className="p-3 bg-emerald-950/30 border border-emerald-900/40 rounded-lg space-y-1">
+            <div className="p-3.5 bg-emerald-950/25 border border-emerald-900/50 rounded-xl space-y-1">
               <div className="flex items-center space-x-2 text-emerald-300 font-semibold">
                 <CheckCircle2 className="w-4 h-4" />
-                <span>The SaliBuoy Intervention</span>
+                <span>SaliBuoy Brine Injection Intervention</span>
               </div>
               <p className="text-slate-400">
-                SaliBuoy autonomous offshore platforms harvest wind energy via surface wind turbine rotors to extract ambient seawater, concentrate it into dense high-salinity brine (42-48 PSU), and inject it at critical subsea downwelling channels, forcing heavy cold water to sink and re-igniting natural convection.
+                Autonomous platforms harvest offshore wind and wave energy to concentrate seawater to 42–48 PSU natural brine and inject it into deep downwelling channels.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Quick Launchpad Card */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-6 space-y-4">
+        <div className="bg-[#060f1f]/90 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-emerald-950 rounded-lg text-emerald-400 border border-emerald-800/50">
-              <ShieldCheck className="w-5 h-5" />
+            <div className="p-2 bg-emerald-950 rounded-lg text-emerald-400 border border-emerald-800/60">
+              <Building2 className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-bold text-white text-base">Key Action Modules</h3>
-              <p className="text-xs text-slate-400">Access required setup & planning tools</p>
+              <p className="text-xs text-slate-400">Operations, setup, and engineering workspaces</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <button
+              type="button"
               onClick={() => setActiveTab('nz-business')}
-              className="p-3 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-sky-500/50 rounded-lg text-left transition-all space-y-1 group"
+              className="p-3.5 bg-[#030812] hover:bg-slate-900 border border-slate-800 hover:border-sky-500/50 rounded-xl text-left transition-colors space-y-1 group cursor-pointer"
             >
               <div className="flex items-center justify-between text-sky-400 font-semibold text-xs">
                 <span>NZ Sole Trader Guide</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </div>
               <p className="text-[11px] text-slate-400">NZBN, IRD GST, Provisional IPONZ patent</p>
             </button>
 
             <button
+              type="button"
               onClick={() => setActiveTab('funding')}
-              className="p-3 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 rounded-lg text-left transition-all space-y-1 group"
+              className="p-3.5 bg-[#030812] hover:bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl text-left transition-colors space-y-1 group cursor-pointer"
             >
               <div className="flex items-center justify-between text-emerald-400 font-semibold text-xs">
                 <span>12-Mo Grant Pipeline</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </div>
               <p className="text-[11px] text-slate-400">Callaghan 40% rebate, Outset, Pacific Channel</p>
             </button>
 
             <button
+              type="button"
               onClick={() => setActiveTab('pitch-deck')}
-              className="p-3 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-teal-500/50 rounded-lg text-left transition-all space-y-1 group"
+              className="p-3.5 bg-[#030812] hover:bg-slate-900 border border-slate-800 hover:border-teal-500/50 rounded-xl text-left transition-colors space-y-1 group cursor-pointer"
             >
               <div className="flex items-center justify-between text-teal-400 font-semibold text-xs">
                 <span>VC Pitch Deck Outline</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </div>
               <p className="text-[11px] text-slate-400">10-Slide deeptech deck tailored for NZ VCs</p>
             </button>
 
             <button
+              type="button"
               onClick={() => setActiveTab('telemetry')}
-              className="p-3 bg-slate-950 hover:bg-slate-800/80 border border-slate-800 hover:border-amber-500/50 rounded-lg text-left transition-all space-y-1 group"
+              className="p-3.5 bg-[#030812] hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl text-left transition-colors space-y-1 group cursor-pointer"
             >
               <div className="flex items-center justify-between text-amber-400 font-semibold text-xs">
                 <span>Telemetry Simulator</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
               </div>
-              <p className="text-[11px] text-slate-400">Live oceanic data stream & buoy telemetry</p>
+              <p className="text-[11px] text-slate-400">Live oceanic data stream &amp; buoy telemetry</p>
             </button>
           </div>
         </div>

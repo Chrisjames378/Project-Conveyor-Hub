@@ -70,7 +70,7 @@ Format the output clearly with:
 Write in professional, clear, persuasive tone tailored for NZ climate venture funds and government R&D grant committees. Do NOT use buzzwords like "jaw-dropping" or "unprecedented".`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.8-flash",
+        model: "gemini-4-hydrogen",
         contents: prompt,
         config: {
           systemInstruction: "You are an expert New Zealand DeepTech grant writer specializing in physical science, oceanography, and climate hardware funding.",
@@ -147,7 +147,7 @@ Provide a comprehensive, professional analysis including:
 Write in a crisp, technical, oceanographic format suitable for climate scientists and offshore buoy operators.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.8-flash",
+        model: "gemini-4-hydrogen",
         contents: prompt,
         config: {
           systemInstruction: "You are an expert satellite oceanographer and climate hardware telemetry specialist.",
@@ -249,7 +249,7 @@ Current Simulation State:
 Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosphere-Ionosphere Coupling (LAIC), Rossby waves, Alpine Fault strain, Taupō Caldera unrest, DART tsunami shockwaves, or Aurora Australis space weather. Keep responses crisp, technical, and structured.`;
 
         const response = await ai.models.generateContent({
-          model: "gemini-3.8-flash",
+          model: "gemini-4-hydrogen",
           contents: userText,
           config: {
             systemInstruction,
@@ -721,7 +721,7 @@ Identify core storm formations, rotational weather movements over the ice sheet,
       `;
 
       const responseStream = await ai.models.generateContentStream({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-4-hydrogen',
         contents: promptText
       });
 
@@ -803,7 +803,7 @@ Write a concise, formal daily oceanographic briefing suitable for executive arch
 4. Actionable Deployment Recommendations for Tomorrow`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-4-hydrogen',
         contents: prompt,
         config: {
           systemInstruction: 'You are an elite oceanographic climate AI specializing in Atlantic Meridional Overturning Circulation (AMOC) stabilization and cryo-salinity dynamics.',
@@ -811,11 +811,132 @@ Write a concise, formal daily oceanographic briefing suitable for executive arch
       });
 
       const summaryText = response.text || "Daily AMOC stabilization summary generated successfully.";
-      return res.json({ summaryText, date: targetDate, source: 'gemini_3_8_flash' });
+      return res.json({ summaryText, date: targetDate, source: 'gemini_4_hydrogen' });
 
     } catch (err: any) {
       console.error('Error generating AMOC summary:', err);
       return res.status(500).json({ error: 'AMOC summary generation failed', details: err?.message || String(err) });
+    }
+  });
+
+  // Interior Fleet Superintendent Advisory Endpoint (Gemini 4 Hydrogen)
+  app.post('/api/superintendent/advise', async (req, res) => {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(503).json({
+          error: 'GEMINI_API_KEY is not configured in Settings > Secrets. Configure an API key to run live Gemini 4 Superintendent briefings.'
+        });
+      }
+
+      const { generation, metrics, fleetHealth, anomalies, subsystems } = req.body || {};
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          },
+        },
+      });
+
+      const prompt = `You are the Advanced Autonomous Interior Fleet Superintendent (Generation ${generation || 2}.0) for SaliBuoy Systems ("Project Conveyor").
+Synthesize a concise, technical engineering directive based on the live interior & fleet state below:
+
+INTELLIGENCE METRICS:
+- Anomaly Detection Precision: ${metrics?.anomalyPrecisionPct ?? 89.2}%
+- Predictive Lead Time: ${metrics?.predictiveLeadHours ?? 49} hours
+- AMOC Buoyancy Yield Gain: +${metrics?.amocEfficiencyGainPct ?? 4.2}%
+
+LIVE FLEET HEALTH (${fleetHealth?.total ?? 23} Ocean Boys):
+- Optimal: ${fleetHealth?.optimalPct ?? 73.9}%
+- Degraded: ${fleetHealth?.degradedPct ?? 21.7}%
+- Critical: ${fleetHealth?.criticalPct ?? 4.3}%
+
+ACTIVE ANOMALIES:
+${Array.isArray(anomalies) && anomalies.length > 0 ? anomalies.map((a: { name: string; state: string; issue: string }) => `- [${a.state}] ${a.name}: ${a.issue}`).join('\n') : '- None detected'}
+
+INTERIOR SUBSYSTEMS:
+${Array.isArray(subsystems) ? subsystems.map((s: { name: string; efficiencyPct: number; status: string }) => `- ${s.name}: ${s.efficiencyPct}% (${s.status})`).join('\n') : ''}
+
+Provide:
+1. Immediate Interior Stabilization Actions
+2. Priority Dispatch Order for Degraded/Critical Units
+3. Next-Month Self-Upgrade Focus`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-4-hydrogen',
+        contents: prompt,
+        config: {
+          systemInstruction: 'You are a senior marine engineering superintendent overseeing autonomous AMOC stabilization buoys and offshore wind-turbine platforms. Be crisp, factual, and direct.'
+        }
+      });
+
+      return res.json({
+        directive: response.text || 'No directive returned.',
+        model: 'gemini-4-hydrogen'
+      });
+    } catch (err: unknown) {
+      console.error('Superintendent AI directive error:', err);
+      const message = err instanceof Error ? err.message : String(err);
+      return res.status(500).json({
+        error: `Superintendent AI directive failed: ${message}`
+      });
+    }
+  });
+
+  // Custom Campaign & Funder Outreach Pitch Generator (Gemini 4 Hydrogen)
+  app.post('/api/outreach/custom-pitch', async (req, res) => {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return res.status(503).json({
+          error: 'GEMINI_API_KEY is not configured in Settings > Secrets. You can use the ready-made Greenpeace and funder pitches above immediately, or add an API key for custom Gemini 4 drafts.'
+        });
+      }
+
+      const { organization, goal, appUrl, contactEmail } = req.body || {};
+      if (!organization || !goal) {
+        return res.status(400).json({ error: 'Missing organization or outreach goal.' });
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          },
+        },
+      });
+
+      const prompt = `Write a concise, persuasive outreach message for SaliBuoy Systems ("Project Conveyor", based in Pukekohe, Auckland, NZ).
+TARGET ORGANIZATION / PLATFORM: ${organization}
+GOAL: ${goal}
+LIVE PUBLIC APP LINK: ${appUrl || 'https://ais-pre-anvaiib6x42jeyxbs5k5ki-205273580701.asia-east1.run.app'}
+CONTACT EMAIL: ${contactEmail || 'chris.james378@gmail.com'}
+
+Include:
+- Subject line
+- Clear hook tailored to ${organization}
+- Key proof points: 23 live Tasman/Southern Ocean buoy feeds, 0.00 ppm synthetic chemicals, <85 dB marine mammal acoustic compliance, Polar Oil & Deep-Sea Strip Mining risk simulator, and $1.5M NZD Seed / 40% Callaghan R&D opportunity.
+- Clear call-to-action with the live URL and email.`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-4-hydrogen',
+        contents: prompt,
+        config: {
+          systemInstruction: 'You are an expert DeepTech and ocean-conservation outreach strategist. Write clear, grounded, non-hyperbolic pitches.'
+        }
+      });
+
+      return res.json({
+        pitchText: response.text || 'Unable to generate pitch.',
+        model: 'gemini-4-hydrogen'
+      });
+    } catch (err: unknown) {
+      console.error('Custom outreach pitch error:', err);
+      const message = err instanceof Error ? err.message : String(err);
+      return res.status(500).json({ error: `Failed to generate pitch: ${message}` });
     }
   });
 

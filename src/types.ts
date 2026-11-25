@@ -20,7 +20,8 @@ export type ActiveTab =
   | 'outreach'
   | 'trials-logistics'
   | 'eco-impact'
-  | 'financial-model';
+  | 'financial-model'
+  | 'superintendent';
 
 export interface WeatherPattern3DData {
   temperatureC: number;
@@ -425,4 +426,54 @@ export interface Print3DSliceMetrics {
   overhangRiskCount: number;
   isWatertightManifold: boolean;
 }
+
+// ==========================================
+// INTERIOR SUPERINTENDENT & MONTHLY UPGRADE ENGINE
+// ==========================================
+
+export interface InteriorSubsystemStatus {
+  id: string;
+  name: string;
+  subsystemZone: 'Surface Rotor & Power' | 'Core Evaporator & Pump' | 'Subsea Diffuser & Sensors' | 'Telemetry & Shielding';
+  baseEfficiencyPct: number;
+  learnedGainPct: number;
+  effectiveEfficiencyPct: number;
+  thermalMarginC: number;
+  status: 'Optimal' | 'Calibrating' | 'Attention Needed';
+  lastTunedMonth: number;
+  upgradeNote: string;
+}
+
+export interface SuperintendentUpgradeRecord {
+  generation: number;
+  monthLabel: string;
+  upgradedAtIso: string;
+  triggerType: 'Scheduled Monthly Auto-Upgrade' | 'Manual Upgrade Rollout' | 'Baseline Initialization';
+  unlockedCapability: string;
+  anomalyPrecisionPct: number;
+  predictiveLeadHours: number;
+  amocEfficiencyGainPct: number;
+  falsePositiveRatePct: number;
+}
+
+export interface SuperintendentActionLog {
+  id: string;
+  timestamp: string;
+  buoyId: string;
+  buoyName: string;
+  action: string;
+  outcome: string;
+  generationAtExecution: number;
+}
+
+export interface SuperintendentState {
+  generation: number;
+  autoUpgradeMonthly: boolean;
+  lastUpgradedIso: string;
+  nextScheduledUpgradeIso: string;
+  upgradeHistory: SuperintendentUpgradeRecord[];
+  actionLogs: SuperintendentActionLog[];
+  remediatedBuoyIds: string[];
+}
+
 
