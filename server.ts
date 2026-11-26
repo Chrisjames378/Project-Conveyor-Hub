@@ -355,7 +355,9 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
       }
 
       return res.json({
-        status: "STREAMING_ACTIVE",
+        status: "SIMULATED",
+        sourceMode: "SIMULATED",
+        message: "Generated demonstration frames and metrics; no satellite-provider or ground-station feed is connected.",
         pollCycle,
         serverUtc: utcTimeStr,
         selectedBand: band,
@@ -366,7 +368,7 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
           downlinkBandwidthKbps: 2450,
           packetsDelivered: 23,
           packetLossPct: 0.0,
-          groundStationsLocked: ["Warkworth NZ", "Awarua Southland NZ", "Canberra DSS-43", "Hawaii Koko Head"]
+          groundStationsLocked: ["DEMO LABEL — Warkworth", "DEMO LABEL — Awarua", "DEMO LABEL — Canberra", "DEMO LABEL — Hawaii"]
         },
         buoyUpdates
       });
