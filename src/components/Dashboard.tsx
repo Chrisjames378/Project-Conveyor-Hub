@@ -41,7 +41,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
           </h1>
           
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
-            A hardware-first oceanographic intervention platform engineered in New Zealand to stabilize the Atlantic Meridional Overturning Circulation (AMOC) through autonomous subsurface salinity pumping and polar cryo-restoration.
+            A New Zealand oceanographic research and engineering concept exploring autonomous marine sensing, energy systems and possible approaches to understanding ocean circulation. Proposed interventions remain research hypotheses and require independent validation.
           </p>
 
           <div className="pt-2 flex flex-wrap gap-3">
@@ -86,50 +86,50 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-sky-800/60 transition-colors">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">AMOC Transport</span>
+            <span className="text-xs font-mono uppercase tracking-wider">Illustrative AMOC scenario</span>
             <Waves className="w-4 h-4 text-sky-400" />
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-bold text-white font-mono">15.2 Sv</span>
             <span className="text-xs text-rose-400 font-mono font-medium">-15.5% vs baseline</span>
           </div>
-          <p className="text-[11px] text-slate-400">Baseline 18.0 Sverdrups (1 Sv = 1M m³/s)</p>
+          <p className="text-[11px] text-slate-400">Example scenario value • not a live measurement</p>
         </div>
 
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-teal-800/60 transition-colors">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">Target Salinity Injection</span>
+            <span className="text-xs font-mono uppercase tracking-wider">Design-study salinity value</span>
             <Thermometer className="w-4 h-4 text-teal-400" />
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-bold text-teal-300 font-mono">45.0 PSU</span>
-            <span className="text-xs text-emerald-400 font-mono font-medium">+10 PSU Density</span>
+            <span className="text-xs text-emerald-400 font-mono font-medium">Illustrative only</span>
           </div>
-          <p className="text-[11px] text-slate-400">Forces localized subsea water sinking</p>
+          <p className="text-[11px] text-slate-400">Requires physical modelling and independent validation</p>
         </div>
 
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-emerald-800/60 transition-colors">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">12-Mo Funding Target</span>
+            <span className="text-xs font-mono uppercase tracking-wider">12-month funding ambition</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-bold text-white font-mono">$1.5M NZD</span>
             <span className="text-xs text-emerald-400 font-mono font-medium">$600k Non-dilutive</span>
           </div>
-          <p className="text-[11px] text-slate-400">VC Seed + Callaghan R&D 40% rebate</p>
+          <p className="text-[11px] text-slate-400">Indicative pipeline • eligibility and availability unverified</p>
         </div>
 
         <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-5 space-y-2 hover:border-amber-800/60 transition-colors">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider">Hardware Status</span>
+            <span className="text-xs font-mono uppercase tracking-wider">Hardware planning status</span>
             <Zap className="w-4 h-4 text-amber-400" />
           </div>
           <div className="flex items-baseline space-x-2">
             <span className="text-2xl font-bold text-amber-300 font-mono">Mark-II Testing</span>
-            <span className="text-xs text-sky-400 font-mono font-medium">75% Complete</span>
+            <span className="text-xs text-sky-400 font-mono font-medium">Planning estimate only</span>
           </div>
-          <p className="text-[11px] text-slate-400">Next: Mark-III Hauraki Gulf ocean trial</p>
+          <p className="text-[11px] text-slate-400">Next milestone subject to design review, permits and funding</p>
         </div>
       </div>
 
@@ -167,10 +167,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ setActiveTab }) => {
             <div className="p-3 bg-emerald-950/30 border border-emerald-900/40 rounded-lg space-y-1">
               <div className="flex items-center space-x-2 text-emerald-300 font-semibold">
                 <CheckCircle2 className="w-4 h-4" />
-                <span>The SaliBuoy Intervention</span>
+                <span>Research concept under evaluation</span>
               </div>
               <p className="text-slate-400">
-                SaliBuoy autonomous offshore platforms harvest wind energy via surface wind turbine rotors to extract ambient seawater, concentrate it into dense high-salinity brine (42-48 PSU), and inject it at critical subsea downwelling channels, forcing heavy cold water to sink and re-igniting natural convection.
+                The current concept explores whether renewable-powered platforms and marine sensing could support controlled research into local salinity and density processes. The proposed concentration, pumping and release mechanisms have not been demonstrated here; potential circulation effects, energy requirements and ecological consequences need peer-reviewed modelling and controlled assessment before any field activity.
               </p>
             </div>
           </div>
