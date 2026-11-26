@@ -249,6 +249,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {GROUP_ORDER.map((groupName) => {
                 const term = mobileSearch.trim().toLowerCase();
                 const items = navItems.filter((i) => i.group === groupName && (!term || i.label.toLowerCase().includes(term)));
+                if (term && items.length === 0) return null;
                 return (
                   <div key={groupName} className="space-y-1">
                     <div className="px-2.5 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">
@@ -343,6 +344,7 @@ export const SidebarRail: React.FC<SidebarRailProps> = ({
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
         {GROUP_ORDER.map((groupName) => {
           const items = navItems.filter((i) => i.group === groupName && (!term || i.label.toLowerCase().includes(term)));
+          if (term && items.length === 0) return null;
           return (
             <div key={groupName} className="space-y-1">
               <div className="px-2.5 pb-1 text-[10px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
