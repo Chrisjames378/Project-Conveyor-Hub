@@ -2,59 +2,131 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  }
-  
-  code, kbd, samp, pre, .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --conveyor-bg: #050d18;
+  --conveyor-panel: #0b1727;
+  --conveyor-line: rgba(148, 163, 184, 0.14);
+  --conveyor-accent: #38bdf8;
 }
 
-/* Custom scrollbar styling for high-tech dashboard feel */
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+  background: var(--conveyor-bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: #e2e8f0;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background:
+    radial-gradient(ellipse at 12% -12%, rgba(8, 145, 178, 0.12), transparent 38rem),
+    radial-gradient(ellipse at 92% 4%, rgba(37, 99, 235, 0.10), transparent 34rem),
+    var(--conveyor-bg);
+}
+
+code, kbd, samp, pre, .font-mono {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+::selection {
+  color: #03111c;
+  background: #67e8f9;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.9);
+  outline-offset: 3px;
+}
+
+button, a, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  touch-action: manipulation;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: #07111f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
+  border: 1px solid #07111f;
+  border-radius: 999px;
+  background: #334155;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0284c7;
+  background: #0e7490;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .radar-sweep {
-  animation: sweep 4s linear infinite;
+  animation: radar-sweep 4s linear infinite;
+  transform-origin: center;
 }
 
-@keyframes sweep {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .pulse-glow {
-  animation: pulseGlow 2s ease-in-out infinite alternate;
+  animation: pulse-glow 2.4s ease-in-out infinite alternate;
 }
 
-@keyframes pulseGlow {
+@keyframes pulse-glow {
   from {
-    opacity: 0.4;
-    box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
+    opacity: 0.55;
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.16);
   }
   to {
     opacity: 1;
-    box-shadow: 0 0 20px rgba(14, 165, 233, 0.6);
+    box-shadow: 0 0 22px rgba(14, 165, 233, 0.42);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 420ms ease-out both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
