@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { ActiveTab, OceanBoy, SuperintendentState } from './types';
 import { INITIAL_OCEAN_BOYS } from './db/oceanBoysFleet';
 import {
@@ -9,28 +9,28 @@ import {
 import { Navbar, SidebarRail, MobileBottomDock } from './components/Navbar';
 import { LandingPage } from './components/LandingPage';
 import { Dashboard } from './components/Dashboard';
-import { FundingRoadmap } from './components/FundingRoadmap';
-import { HardwareRoadmap } from './components/HardwareRoadmap';
-import { NzBusinessGuide } from './components/NzBusinessGuide';
-import { PitchDeck } from './components/PitchDeck';
-import { TelemetrySim } from './components/TelemetrySim';
-import { BOMViewer } from './components/BOMViewer';
-import { RegulatoryCompliance } from './components/RegulatoryCompliance';
-import { OutreachHub } from './components/OutreachHub';
-import { OceanTrialsLogistics } from './components/OceanTrialsLogistics';
-import { ThreeDControlDatabase } from './components/ThreeDControlDatabase';
-import { SatelliteWeather } from './components/SatelliteWeather';
-import { EcoImpactAudit } from './components/EcoImpactAudit';
-import { FinancialModel } from './components/FinancialModel';
-import { SystemDynamics } from './components/SystemDynamics';
-import { GlobalClimateDashboard } from './components/GlobalClimateDashboard';
-import { OceaniaObservatory } from './components/OceaniaObservatory';
-import { OceanBoysFleet } from './components/OceanBoysFleet';
-import { WeatherPollution3DModel } from './components/WeatherPollution3DModel';
-import { MeshAIStudio } from './components/MeshAIStudio';
-import { WindTurbinePlatform3D } from './components/WindTurbinePlatform3D';
-import { InteriorSuperintendent } from './components/InteriorSuperintendent';
-import { PublicOutreachPortal } from './components/PublicOutreachPortal';
+const FundingRoadmap = lazy(() => import('./components/FundingRoadmap').then(module => ({ default: module.FundingRoadmap })));
+const HardwareRoadmap = lazy(() => import('./components/HardwareRoadmap').then(module => ({ default: module.HardwareRoadmap })));
+const NzBusinessGuide = lazy(() => import('./components/NzBusinessGuide').then(module => ({ default: module.NzBusinessGuide })));
+const PitchDeck = lazy(() => import('./components/PitchDeck').then(module => ({ default: module.PitchDeck })));
+const TelemetrySim = lazy(() => import('./components/TelemetrySim').then(module => ({ default: module.TelemetrySim })));
+const BOMViewer = lazy(() => import('./components/BOMViewer').then(module => ({ default: module.BOMViewer })));
+const RegulatoryCompliance = lazy(() => import('./components/RegulatoryCompliance').then(module => ({ default: module.RegulatoryCompliance })));
+const OutreachHub = lazy(() => import('./components/OutreachHub').then(module => ({ default: module.OutreachHub })));
+const OceanTrialsLogistics = lazy(() => import('./components/OceanTrialsLogistics').then(module => ({ default: module.OceanTrialsLogistics })));
+const ThreeDControlDatabase = lazy(() => import('./components/ThreeDControlDatabase').then(module => ({ default: module.ThreeDControlDatabase })));
+const SatelliteWeather = lazy(() => import('./components/SatelliteWeather').then(module => ({ default: module.SatelliteWeather })));
+const EcoImpactAudit = lazy(() => import('./components/EcoImpactAudit').then(module => ({ default: module.EcoImpactAudit })));
+const FinancialModel = lazy(() => import('./components/FinancialModel').then(module => ({ default: module.FinancialModel })));
+const SystemDynamics = lazy(() => import('./components/SystemDynamics').then(module => ({ default: module.SystemDynamics })));
+const GlobalClimateDashboard = lazy(() => import('./components/GlobalClimateDashboard').then(module => ({ default: module.GlobalClimateDashboard })));
+const OceaniaObservatory = lazy(() => import('./components/OceaniaObservatory').then(module => ({ default: module.OceaniaObservatory })));
+const OceanBoysFleet = lazy(() => import('./components/OceanBoysFleet').then(module => ({ default: module.OceanBoysFleet })));
+const WeatherPollution3DModel = lazy(() => import('./components/WeatherPollution3DModel').then(module => ({ default: module.WeatherPollution3DModel })));
+const MeshAIStudio = lazy(() => import('./components/MeshAIStudio').then(module => ({ default: module.MeshAIStudio })));
+const WindTurbinePlatform3D = lazy(() => import('./components/WindTurbinePlatform3D').then(module => ({ default: module.WindTurbinePlatform3D })));
+const InteriorSuperintendent = lazy(() => import('./components/InteriorSuperintendent').then(module => ({ default: module.InteriorSuperintendent })));
+const PublicOutreachPortal = lazy(() => import('./components/PublicOutreachPortal').then(module => ({ default: module.PublicOutreachPortal })));
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('landing');
@@ -140,6 +140,7 @@ export function App() {
 
         <div className="flex-1 min-w-0 flex flex-col">
           <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <Suspense fallback={<div className="flex min-h-[42vh] items-center justify-center"><div className="rounded-xl border border-slate-800 bg-slate-900/80 px-5 py-4 text-xs font-mono text-slate-300 shadow-xl"><span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-cyan-400" />Loading workspace module…</div></div>}>
             {activeTab === 'landing' && <LandingPage setActiveTab={setActiveTab} />}
             {activeTab === 'overview' && (
               <Dashboard
@@ -186,6 +187,7 @@ export function App() {
             {activeTab === 'telemetry' && <TelemetrySim />}
             {activeTab === 'bom' && <BOMViewer />}
             {activeTab === 'regulatory' && <RegulatoryCompliance />}
+            </Suspense>
           </main>
 
           <footer className="border-t border-slate-800/70 bg-[#030812]/90 py-4 px-4 sm:px-6 lg:px-8 text-xs font-mono text-slate-500">
