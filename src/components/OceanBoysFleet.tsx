@@ -563,7 +563,7 @@ export function OceanBoysFleet({
               <span className="text-cyan-400 font-bold ml-1">{networkStats.downlinkBandwidthKbps} Kbps</span>
             </div>
             <div>
-              <span className="text-slate-500">PACKETS DELIVERED:</span>
+              <span className="text-slate-500">DEMO FRAMES GENERATED:</span>
               <span className="text-emerald-400 font-bold ml-1">{networkStats.packetsDelivered} frames</span>
             </div>
             <div>
@@ -571,8 +571,8 @@ export function OceanBoysFleet({
               <span className="text-teal-400 font-bold ml-1">{networkStats.packetLossPct.toFixed(1)}%</span>
             </div>
             <div className="hidden lg:block">
-              <span className="text-slate-500">GROUND STATIONS:</span>
-              <span className="text-sky-300 font-bold ml-1">Warkworth & Awarua NZ</span>
+              <span className="text-slate-500">DEMO NETWORK LABELS:</span>
+              <span className="text-sky-300 font-bold ml-1">Warkworth & Awarua (illustrative)</span>
             </div>
             <div className="hidden lg:block text-right">
               <span className="text-slate-500">LAST SCAN:</span>
