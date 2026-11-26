@@ -279,7 +279,8 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
         timestamp,
         activeDownwellingCount: 5,
         oppoA5xCompatible: true,
-        sourceMode: "SIMULATED",\n        message: "Demonstration telemetry only; no physical buoy or satellite-provider connection is active."
+        sourceMode: "SIMULATED",
+        message: "Demonstration telemetry only; no physical buoy or satellite-provider connection is active."
       });
     } catch (err: any) {
       return res.status(500).json({ error: "Failed to fetch ocean boys telemetry", details: err?.message });
