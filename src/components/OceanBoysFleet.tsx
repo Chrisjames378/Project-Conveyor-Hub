@@ -383,7 +383,9 @@ export function OceanBoysFleet({
 
   return (
     <div className="space-y-6">
-      
+      <div role="note" className="rounded-xl border border-amber-400/30 bg-amber-400/[0.06] px-4 py-3 text-xs leading-relaxed text-amber-100">
+        <strong className="font-bold">SIMULATION ONLY:</strong> panels use stock imagery and generated demo metadata. No live satellite provider, ground-station connection, physical buoy telemetry or equipment control is connected.
+      </div>
       {/* SECTION 1: TOP LIVE STREAMING COMMAND HEADER */}
       <div className="bg-[#060f1f]/95 border border-slate-800/90 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -563,7 +565,7 @@ export function OceanBoysFleet({
               <span className="text-cyan-400 font-bold ml-1">{networkStats.downlinkBandwidthKbps} Kbps</span>
             </div>
             <div>
-              <span className="text-slate-500">PACKETS DELIVERED:</span>
+              <span className="text-slate-500">DEMO FRAMES GENERATED:</span>
               <span className="text-emerald-400 font-bold ml-1">{networkStats.packetsDelivered} frames</span>
             </div>
             <div>
@@ -571,8 +573,8 @@ export function OceanBoysFleet({
               <span className="text-teal-400 font-bold ml-1">{networkStats.packetLossPct.toFixed(1)}%</span>
             </div>
             <div className="hidden lg:block">
-              <span className="text-slate-500">GROUND STATIONS:</span>
-              <span className="text-sky-300 font-bold ml-1">Warkworth & Awarua NZ</span>
+              <span className="text-slate-500">DEMO NETWORK LABELS:</span>
+              <span className="text-sky-300 font-bold ml-1">Warkworth & Awarua (illustrative)</span>
             </div>
             <div className="hidden lg:block text-right">
               <span className="text-slate-500">LAST SCAN:</span>
@@ -593,9 +595,9 @@ export function OceanBoysFleet({
               }`}
             >
               <LayoutGrid className="w-4 h-4 text-teal-300" />
-              <span>LIVE SATELLITE MATRIX (ALL 23 BUOYS)</span>
+              <span>SATELLITE FEED SIMULATION (ALL 23 BUOYS)</span>
               <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-900 text-teal-300 border border-teal-800">
-                23 LIVE FEEDS
+                23 DEMO STREAMS
               </span>
             </button>
 
@@ -880,7 +882,7 @@ export function OceanBoysFleet({
       </div>
 
       {/* ========================================================================= */}
-      {/* VIEW MODE 1: LIVE SATELLITE MATRIX (ALL 23 BUOYS VISUAL WALL) */}
+      {/* VIEW MODE 1: SATELLITE FEED SIMULATION (ALL 23 BUOYS) */}
       {/* ========================================================================= */}
       {dashboardView === 'matrix' && (
         <div className="space-y-4">
@@ -933,7 +935,7 @@ export function OceanBoysFleet({
                     {/* Live Satellite Image */}
                     <img 
                       src={boy.satellitePass.imageUrl} 
-                      alt={`Live satellite view for ${boy.name}`}
+                      alt={`Satellite demo image for ${boy.name}`}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       style={getSpectralFilterStyle()}
                     />
@@ -1575,11 +1577,11 @@ export function OceanBoysFleet({
               <div className="flex items-center space-x-2">
                 <Terminal className="w-4 h-4 text-teal-400" />
                 <h3 className="text-sm font-bold text-white uppercase">
-                  LIVE SATELLITE DOWNLINK EVENT STREAM (TELEMETRY PACKETS)
+                  SIMULATED DOWNLINK EVENT LOG
                 </h3>
               </div>
               <span className="text-slate-500 text-[11px]">
-                Auto-polled via Warkworth & Awarua ground stations
+                Synthetic demo events; no ground-station connection
               </span>
             </div>
 

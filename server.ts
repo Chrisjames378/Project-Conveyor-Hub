@@ -279,14 +279,15 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
         timestamp,
         activeDownwellingCount: 5,
         oppoA5xCompatible: true,
-        message: "All 23 Ocean Boys telemetry streams active with real-time satellite pass ephemeris."
+        sourceMode: "SIMULATED",
+        message: "Demonstration telemetry only; no physical buoy or satellite-provider connection is active."
       });
     } catch (err: any) {
       return res.status(500).json({ error: "Failed to fetch ocean boys telemetry", details: err?.message });
     }
   });
 
-  // Ocean Boys Live Dynamic Satellite Imagery Stream (Polling Endpoint)
+  // Synthetic satellite-feed demonstration endpoint. It does not connect to satellite providers.
   app.get("/api/ocean-boys-satellite-stream", async (req, res) => {
     try {
       const pollCycle = parseInt(req.query.pollCycle as string) || 1;
@@ -354,7 +355,9 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
       }
 
       return res.json({
-        status: "STREAMING_ACTIVE",
+        status: "SIMULATED",
+        sourceMode: "SIMULATED",
+        message: "Generated demonstration frames and metrics; no satellite-provider or ground-station feed is connected.",
         pollCycle,
         serverUtc: utcTimeStr,
         selectedBand: band,
@@ -365,7 +368,7 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
           downlinkBandwidthKbps: 2450,
           packetsDelivered: 23,
           packetLossPct: 0.0,
-          groundStationsLocked: ["Warkworth NZ", "Awarua Southland NZ", "Canberra DSS-43", "Hawaii Koko Head"]
+          groundStationsLocked: ["DEMO LABEL — Warkworth", "DEMO LABEL — Awarua", "DEMO LABEL — Canberra", "DEMO LABEL — Hawaii"]
         },
         buoyUpdates
       });

@@ -40,6 +40,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <div role="note" className="flex flex-col gap-2 rounded-xl border border-amber-400/25 bg-amber-400/[0.06] px-4 py-3 sm:flex-row sm:items-start">
+        <div className="flex shrink-0 items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-200"><AlertTriangle className="h-4 w-4" /> Research preview</div>
+        <p className="text-xs leading-relaxed text-slate-300">Fleet readings, health classifications, superintendent generations, AI performance figures and ocean indicators are illustrative application models unless a module explicitly identifies a verified external data source. This dashboard does not command physical equipment. Any field trial or environmental intervention requires independent scientific, ecological, engineering and regulatory review.</p>
+      </div>
       {/* Mission Control Header */}
       <div className="rounded-2xl bg-[#060f1f]/95 p-6 md:p-7 border border-slate-800/90 shadow-2xl space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -54,7 +58,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </h1>
 
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Hardware-first oceanographic intervention platform engineered in Pukekohe to stabilize Atlantic Meridional Overturning Circulation (AMOC) via autonomous subsurface salinity pumping.
+              A Pukekohe-based oceanographic research and engineering concept exploring marine sensing, renewable-energy systems and approaches to understanding ocean circulation. Proposed interventions remain research hypotheses and require independent validation.
             </p>
           </div>
 
@@ -93,50 +97,50 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-mono uppercase tracking-wider">AMOC Transport</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">Illustrative AMOC scenario</span>
             <Waves className="w-4 h-4 text-sky-400" />
           </div>
           <div className="flex items-baseline space-x-2 font-mono tabular-nums">
             <span className="text-2xl font-bold text-white">15.2 Sv</span>
-            <span className="text-xs text-rose-400 font-semibold">-15.5% baseline</span>
+            <span className="text-xs text-rose-400 font-semibold">Scenario delta</span>
           </div>
-          <p className="text-[11px] text-slate-400">Baseline 18.0 Sverdrups (1 Sv = 1M m³/s)</p>
+          <p className="text-[11px] text-slate-400">Illustrative baseline • not a live measurement</p>
         </div>
 
         <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-mono uppercase tracking-wider">Target Salinity</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">Design-study salinity value</span>
             <Thermometer className="w-4 h-4 text-teal-400" />
           </div>
           <div className="flex items-baseline space-x-2 font-mono tabular-nums">
             <span className="text-2xl font-bold text-teal-300">45.0 PSU</span>
-            <span className="text-xs text-emerald-400 font-semibold">+10 PSU Density</span>
+            <span className="text-xs text-emerald-400 font-semibold">Illustrative only</span>
           </div>
-          <p className="text-[11px] text-slate-400">Forces localized subsea water sinking</p>
+          <p className="text-[11px] text-slate-400">Requires independent modelling and validation</p>
         </div>
 
         <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-mono uppercase tracking-wider">12-Mo Seed Target</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">12-month funding ambition</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="flex items-baseline space-x-2 font-mono tabular-nums">
             <span className="text-2xl font-bold text-white">$1.5M NZD</span>
-            <span className="text-xs text-emerald-400 font-semibold">$600k Grant</span>
+            <span className="text-xs text-emerald-400 font-semibold">Indicative grant target</span>
           </div>
-          <p className="text-[11px] text-slate-400">VC Seed + Callaghan R&amp;D 40% rebate</p>
+          <p className="text-[11px] text-slate-400">Eligibility and availability must be verified</p>
         </div>
 
         <div className="bg-[#060f1f]/90 border border-slate-800 rounded-xl p-5 space-y-1.5">
           <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-mono uppercase tracking-wider">Prototype Phase</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">Prototype planning status</span>
             <Zap className="w-4 h-4 text-amber-400" />
           </div>
           <div className="flex items-baseline space-x-2 font-mono tabular-nums">
             <span className="text-2xl font-bold text-amber-300">Mark-II</span>
-            <span className="text-xs text-sky-400 font-semibold">75% Complete</span>
+            <span className="text-xs text-sky-400 font-semibold">Planning estimate only</span>
           </div>
-          <p className="text-[11px] text-slate-400">Next: Mark-III Hauraki Gulf ocean trial</p>
+          <p className="text-[11px] text-slate-400">Next milestone depends on design review, permits and funding</p>
         </div>
       </div>
 
@@ -159,7 +163,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             Active Monthly Intelligence: {getUnlockedCapabilityForMonth(suptGen)}
           </h3>
           <p className="text-xs font-mono text-slate-400 tabular-nums">
-            Live Fleet ({fleetHealth.total} Buoys):{' '}
+            Modelled Fleet ({fleetHealth.total} Units):{' '}
             <span className="text-emerald-300 font-bold">{fleetHealth.optimalPct.toFixed(1)}% Optimal</span> •{' '}
             <span className="text-amber-300 font-bold">{fleetHealth.degradedPct.toFixed(1)}% Degraded</span> •{' '}
             <span className="text-rose-300 font-bold">{fleetHealth.criticalPct.toFixed(1)}% Critical</span>
@@ -227,10 +231,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="p-3.5 bg-emerald-950/25 border border-emerald-900/50 rounded-xl space-y-1">
               <div className="flex items-center space-x-2 text-emerald-300 font-semibold">
                 <CheckCircle2 className="w-4 h-4" />
-                <span>SaliBuoy Brine Injection Intervention</span>
+                <span>Brine-injection concept under evaluation</span>
               </div>
               <p className="text-slate-400">
-                Autonomous platforms harvest offshore wind and wave energy to concentrate seawater to 42–48 PSU natural brine and inject it into deep downwelling channels.
+                The concept explores renewable-powered marine platforms and sensing for controlled research into local salinity and density processes. Concentration, pumping, release mechanisms and any wider circulation effects are not validated by this dashboard; they require peer-reviewed modelling and independent ecological assessment.
               </p>
             </div>
           </div>

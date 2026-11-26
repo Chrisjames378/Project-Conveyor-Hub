@@ -81,7 +81,7 @@ export async function pollSatelliteNetwork(
           salinityPsu: Number(Math.max(32, Math.min(48, buoy.salinityPsu + salinityJitter)).toFixed(2)),
           ambientTempC: Number((buoy.ambientTempC + tempJitter).toFixed(1)),
           wavePowerWatts: Math.max(0, buoy.wavePowerWatts + waveJitter),
-          lastPing: 'Live Downlink Sync',
+          lastPing: 'Demo Feed Updated',
           satellitePass: {
             ...buoy.satellitePass,
             satellite: update.satellite,
@@ -151,7 +151,7 @@ export async function pollSatelliteNetwork(
 
     return {
       ...buoy,
-      lastPing: 'Local Stream Ingested',
+      lastPing: 'Local Demo Feed Updated',
       satellitePass: {
         ...buoy.satellitePass,
         imageUrl: FALLBACK_SATELLITE_IMAGES[imgIdx],
