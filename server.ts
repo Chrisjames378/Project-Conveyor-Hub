@@ -279,14 +279,14 @@ Answer user questions with deep scientific accuracy regarding Lithosphere-Atmosp
         timestamp,
         activeDownwellingCount: 5,
         oppoA5xCompatible: true,
-        message: "All 23 Ocean Boys telemetry streams active with real-time satellite pass ephemeris."
+        sourceMode: "SIMULATED",\n        message: "Demonstration telemetry only; no physical buoy or satellite-provider connection is active."
       });
     } catch (err: any) {
       return res.status(500).json({ error: "Failed to fetch ocean boys telemetry", details: err?.message });
     }
   });
 
-  // Ocean Boys Live Dynamic Satellite Imagery Stream (Polling Endpoint)
+  // Synthetic satellite-feed demonstration endpoint. It does not connect to satellite providers.
   app.get("/api/ocean-boys-satellite-stream", async (req, res) => {
     try {
       const pollCycle = parseInt(req.query.pollCycle as string) || 1;
