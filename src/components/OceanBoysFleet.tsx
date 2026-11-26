@@ -383,7 +383,9 @@ export function OceanBoysFleet({
 
   return (
     <div className="space-y-6">
-      
+      <div role="note" className="rounded-xl border border-amber-400/30 bg-amber-400/[0.06] px-4 py-3 text-xs leading-relaxed text-amber-100">
+        <strong className="font-bold">SIMULATION ONLY:</strong> panels use stock imagery and generated demo metadata. No live satellite provider, ground-station connection, physical buoy telemetry or equipment control is connected.
+      </div>
       {/* SECTION 1: TOP LIVE STREAMING COMMAND HEADER */}
       <div className="bg-[#060f1f]/95 border border-slate-800/90 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
