@@ -106,6 +106,7 @@ export function App() {
 
   if (isOutreachPortalOpen) {
     return (
+      <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[#030812] text-xs font-mono text-slate-300">Loading campaign portal…</div>}>
       <PublicOutreachPortal
         onExitPortal={() => {
           setIsOutreachPortalOpen(false);
@@ -116,6 +117,7 @@ export function App() {
           }
         }}
       />
+      </Suspense>
     );
   }
 
