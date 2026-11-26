@@ -9,6 +9,7 @@ import {
 import { Navbar, SidebarRail, MobileBottomDock } from './components/Navbar';
 import { LandingPage } from './components/LandingPage';
 import { Dashboard } from './components/Dashboard';
+import { ModuleErrorBoundary } from './components/ModuleErrorBoundary';
 const FundingRoadmap = lazy(() => import('./components/FundingRoadmap').then(module => ({ default: module.FundingRoadmap })));
 const HardwareRoadmap = lazy(() => import('./components/HardwareRoadmap').then(module => ({ default: module.HardwareRoadmap })));
 const NzBusinessGuide = lazy(() => import('./components/NzBusinessGuide').then(module => ({ default: module.NzBusinessGuide })));
@@ -106,6 +107,7 @@ export function App() {
 
   if (isOutreachPortalOpen) {
     return (
+      <ModuleErrorBoundary label="campaign portal">
       <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[#030812] text-xs font-mono text-slate-300">Loading campaign portal…</div>}>
       <PublicOutreachPortal
         onExitPortal={() => {
@@ -118,6 +120,7 @@ export function App() {
         }}
       />
       </Suspense>
+      </ModuleErrorBoundary>
     );
   }
 
@@ -142,6 +145,7 @@ export function App() {
 
         <div className="flex-1 min-w-0 flex flex-col">
           <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <ModuleErrorBoundary label="workspace">
             <Suspense fallback={<div className="flex min-h-[42vh] items-center justify-center"><div className="rounded-xl border border-slate-800 bg-slate-900/80 px-5 py-4 text-xs font-mono text-slate-300 shadow-xl"><span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-cyan-400" />Loading workspace module…</div></div>}>
             {activeTab === 'landing' && <LandingPage setActiveTab={setActiveTab} />}
             {activeTab === 'overview' && (
@@ -190,6 +194,7 @@ export function App() {
             {activeTab === 'bom' && <BOMViewer />}
             {activeTab === 'regulatory' && <RegulatoryCompliance />}
             </Suspense>
+            </ModuleErrorBoundary>
           </main>
 
           <footer className="border-t border-slate-800/70 bg-[#030812]/90 py-4 px-4 sm:px-6 lg:px-8 text-xs font-mono text-slate-500">
