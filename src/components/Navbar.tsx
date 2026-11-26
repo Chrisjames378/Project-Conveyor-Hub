@@ -1,31 +1,13 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ActiveTab } from '../types';
 import { MobileAccessModal } from './MobileAccessModal';
 import { OppoA6xTerminalModal } from './OppoA6xTerminalModal';
 import { SmsAlertsModal } from './SmsAlertsModal';
-import { 
-  Globe2,
-  Compass, 
-  DollarSign, 
-  Cpu, 
-  FileCheck2, 
-  Presentation, 
-  Activity, 
-  Package, 
-  ShieldAlert, 
-  Anchor,
-  Sparkles,
-  Ship,
-  Box,
-  Leaf,
-  Calculator,
-  Radio,
-  LineChart,
-  Thermometer,
-  Smartphone,
-  QrCode,
-  Bell,
-  Wind
+import {
+  Activity, Anchor, Bell, Box, Building2, ChevronDown, Compass, Cpu,
+  DollarSign, FileCheck2, Globe2, Layers, Leaf, Menu, Package, Presentation,
+  QrCode, Radio, Search, ShieldAlert, Ship, Smartphone, Sparkles,
+  Thermometer, Wind, X, Calculator, LineChart
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -33,165 +15,151 @@ interface NavbarProps {
   setActiveTab: (tab: ActiveTab) => void;
 }
 
+type NavSection = 'Command centre' | 'Ocean intelligence' | 'Engineering & delivery';
+
+interface NavItem {
+  id: ActiveTab;
+  label: string;
+  icon: React.ReactNode;
+  badge?: string;
+  section: NavSection;
+}
+
+const navItems: NavItem[] = [
+  { id: 'landing', label: 'Investor landing', icon: <Globe2 />, badge: 'PUBLIC', section: 'Command centre' },
+  { id: 'overview', label: 'Executive overview', icon: <Compass />, section: 'Command centre' },
+  { id: 'ocean-boys-fleet', label: 'Ocean Boys fleet', icon: <Radio />, badge: 'FLEET', section: 'Ocean intelligence' },
+  { id: 'oceania-observatory', label: 'Oceania & polar observatory', icon: <Radio />, section: 'Ocean intelligence' },
+  { id: 'global-climate', label: 'Global climate & SST', icon: <Thermometer />, badge: 'NOAA', section: 'Ocean intelligence' },
+  { id: 'satellite-weather', label: 'Satellite weather', icon: <Wind />, section: 'Ocean intelligence' },
+  { id: 'weather-pollution-3d', label: 'Weather & pollution 3D', icon: <Wind />, section: 'Ocean intelligence' },
+  { id: 'telemetry', label: 'Telemetry simulator', icon: <Activity />, badge: 'SIM', section: 'Ocean intelligence' },
+  { id: 'system-dynamics', label: 'System dynamics', icon: <LineChart />, section: 'Ocean intelligence' },
+  { id: 'mesh-ai', label: 'Mesh AI studio', icon: <Box />, badge: '3D', section: 'Engineering & delivery' },
+  { id: 'wind-turbine-3d', label: 'Wind turbine 3D', icon: <Wind />, section: 'Engineering & delivery' },
+  { id: '3d-control', label: '3D CAD control database', icon: <Box />, section: 'Engineering & delivery' },
+  { id: 'hardware', label: 'Hardware roadmap', icon: <Cpu />, section: 'Engineering & delivery' },
+  { id: 'bom', label: 'Bill of materials', icon: <Package />, section: 'Engineering & delivery' },
+  { id: 'trials-logistics', label: 'Ocean trials logistics', icon: <Ship />, section: 'Engineering & delivery' },
+  { id: 'regulatory', label: 'Maritime compliance', icon: <ShieldAlert />, section: 'Engineering & delivery' },
+  { id: 'eco-impact', label: 'Environmental safeguards', icon: <Leaf />, section: 'Engineering & delivery' },
+  { id: 'financial-model', label: 'Fleet financial model', icon: <Calculator />, section: 'Engineering & delivery' },
+  { id: 'funding', label: 'Funding roadmap', icon: <DollarSign />, badge: 'NZD', section: 'Engineering & delivery' },
+  { id: 'outreach', label: 'Grant & outreach hub', icon: <Sparkles />, section: 'Engineering & delivery' },
+  { id: 'nz-business', label: 'NZ business guide', icon: <Building2 />, section: 'Engineering & delivery' },
+  { id: 'pitch-deck', label: 'Investor pitch deck', icon: <Presentation />, section: 'Engineering & delivery' },
+];
+
+const sections: NavSection[] = ['Command centre', 'Ocean intelligence', 'Engineering & delivery'];
+
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
-  const [isMobileModalOpen, setIsMobileModalOpen] = useState<boolean>(false);
-  const [isOppoModalOpen, setIsOppoModalOpen] = useState<boolean>(false);
-  const [isSmsAlertsOpen, setIsSmsAlertsOpen] = useState<boolean>(false);
-  const navItems: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: string }[] = [
-    { id: 'landing', label: 'Investor Landing', icon: <Globe2 className="w-4 h-4 text-emerald-400" />, badge: 'PUBLIC' },
-    { id: 'overview', label: 'Overview & AMOC', icon: <Compass className="w-4 h-4" /> },
-    { id: 'ocean-boys-fleet', label: 'Ocean Boys & Real-Time Satellites', icon: <Radio className="w-4 h-4 text-teal-400 animate-pulse" />, badge: '23 BOYS • LIVE SAT' },
-    { id: 'mesh-ai', label: 'Mesh AI - 3D Sculpt & Print', icon: <Box className="w-4 h-4 text-amber-400 animate-pulse" />, badge: 'AI • SCULPT • STL' },
-    { id: 'wind-turbine-3d', label: 'Wind Turbine 3D (Weather & Snow)', icon: <Wind className="w-4 h-4 text-sky-400 animate-pulse" />, badge: '3D • SNOW' },
-    { id: 'weather-pollution-3d', label: '3D Weather & Pollution (CO2/CH4)', icon: <Wind className="w-4 h-4 text-emerald-400 animate-pulse" />, badge: '3D • CO2 • CH4' },
-    { id: 'oceania-observatory', label: 'Oceania & Polar Observatory', icon: <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />, badge: '3D LIVE' },
-    { id: 'global-climate', label: 'Global Climate & NOAA SST', icon: <Thermometer className="w-4 h-4 text-rose-400" />, badge: 'NOAA CRW' },
-    { id: 'system-dynamics', label: 'System Dynamics 50-Yr', icon: <LineChart className="w-4 h-4 text-sky-400" />, badge: 'D3.JS' },
-    { id: '3d-control', label: '3D CAD Control Database', icon: <Box className="w-4 h-4 text-cyan-400" />, badge: '3D TWIN' },
-    { id: 'satellite-weather', label: 'Polar & NZ Satellite Radar', icon: <Radio className="w-4 h-4 text-sky-400" />, badge: 'NOAA/NASA/HIMAWARI' },
-    { id: 'financial-model', label: 'Fleet Financial Model', icon: <Calculator className="w-4 h-4 text-emerald-400" />, badge: 'ROI/NPV' },
-    { id: 'eco-impact', label: 'Eco Safety Audit', icon: <Leaf className="w-4 h-4 text-emerald-400" />, badge: 'EPA EEZ' },
-    { id: 'funding', label: '12-Mo NZ Funding', icon: <DollarSign className="w-4 h-4" />, badge: '$1.5M NZD' },
-    { id: 'outreach', label: 'Grant & Outreach Hub', icon: <Sparkles className="w-4 h-4 text-purple-400" />, badge: 'AI' },
-    { id: 'hardware', label: 'Hardware Roadmap', icon: <Cpu className="w-4 h-4" />, badge: 'Mk-III' },
-    { id: 'trials-logistics', label: 'Ocean Trials Logistics', icon: <Ship className="w-4 h-4 text-sky-400" /> },
-    { id: 'nz-business', label: 'NZ Business & Sole Trader', icon: <FileCheck2 className="w-4 h-4" /> },
-    { id: 'pitch-deck', label: 'VC Pitch Deck', icon: <Presentation className="w-4 h-4" /> },
-    { id: 'telemetry', label: 'Live Telemetry Sim', icon: <Activity className="w-4 h-4" />, badge: 'LIVE' },
-    { id: 'bom', label: 'Hardware BOM', icon: <Package className="w-4 h-4" /> },
-    { id: 'regulatory', label: 'Maritime Compliance', icon: <ShieldAlert className="w-4 h-4" /> },
-  ];
+  const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
+  const [isOppoModalOpen, setIsOppoModalOpen] = useState(false);
+  const [isSmsAlertsOpen, setIsSmsAlertsOpen] = useState(false);
+  const [isModulesOpen, setIsModulesOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const filteredItems = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return term ? navItems.filter(item => item.label.toLowerCase().includes(term) || item.section.toLowerCase().includes(term)) : navItems;
+  }, [search]);
+
+  const navigate = (tab: ActiveTab) => {
+    setActiveTab(tab);
+    setIsModulesOpen(false);
+    setSearch('');
+  };
+
+  const quickLinks: ActiveTab[] = ['overview', 'ocean-boys-fleet', 'mesh-ai', 'telemetry', 'funding'];
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo & Brand */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('landing')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-sky-500 to-teal-400 p-0.5 shadow-lg shadow-sky-950/50 flex items-center justify-center">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Anchor className="w-5 h-5 text-sky-400" />
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-bold text-lg tracking-tight text-white font-mono">SALIBUOY</span>
-                <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-sky-950 text-sky-300 border border-sky-800/60 rounded">
-                  NZ DEEPTECH
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 font-mono tracking-tight hidden sm:block">
-                Project Conveyor • AMOC Stabilization & Cryo-Restoration
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Actions & Status */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Oppo A6x Field Simulator Direct Trigger */}
-            <button
-              type="button"
-              onClick={() => setIsOppoModalOpen(true)}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-teal-500/20 to-emerald-500/20 hover:from-teal-500/30 hover:to-emerald-500/30 border border-teal-400/40 text-teal-200 hover:text-white rounded-lg text-xs font-mono font-medium transition-all shadow-sm cursor-pointer"
-              title="Launch Oppo A6x Field Terminal Simulator (90Hz)"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-teal-400 animate-pulse" />
-              <span className="hidden sm:inline">Oppo A6x Terminal</span>
-              <span className="sm:hidden">Oppo A6x</span>
-              <span className="px-1.5 py-0.2 text-[9px] bg-teal-500/20 text-teal-300 rounded font-bold border border-teal-500/30">
-                90Hz
+    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-[#07111f]/95 shadow-lg shadow-slate-950/20 backdrop-blur-xl">
+      <div className="mx-auto max-w-[1600px] px-3 sm:px-5 lg:px-7">
+        <div className="flex min-h-[68px] items-center justify-between gap-3">
+          <button type="button" onClick={() => navigate('landing')} className="group flex min-w-0 items-center gap-3 text-left" aria-label="Go to Project Conveyor home">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-400/30 bg-gradient-to-br from-cyan-400/20 to-blue-500/10 text-cyan-300 shadow-lg shadow-cyan-950/30 transition group-hover:border-cyan-300/60">
+              <Anchor className="h-5 w-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="flex items-center gap-2">
+                <span className="truncate text-sm font-extrabold tracking-[0.12em] text-white sm:text-base">SALIBUOY</span>
+                <span className="hidden rounded-md border border-cyan-400/20 bg-cyan-400/10 px-1.5 py-0.5 text-[9px] font-bold tracking-widest text-cyan-200 sm:inline-flex">FIELD SYSTEMS</span>
               </span>
-            </button>
+              <span className="hidden text-[10px] tracking-wide text-slate-400 sm:block">PROJECT CONVEYOR <span className="text-slate-600">/</span> OCEAN INTELLIGENCE</span>
+            </span>
+          </button>
 
-            {/* SMS Alerts Direct Trigger */}
-            <button
-              type="button"
-              onClick={() => setIsSmsAlertsOpen(true)}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 hover:from-emerald-500/20 hover:to-teal-500/20 border border-emerald-500/40 text-emerald-300 hover:text-white rounded-lg text-xs font-mono font-medium transition-all shadow-sm cursor-pointer"
-              title="Configure SMS Notification Alerts for Anonymous Info & Drift"
-            >
-              <Bell className="w-3.5 h-3.5 text-emerald-400 animate-bounce" />
-              <span className="hidden sm:inline">SMS Alerts</span>
-              <span className="sm:hidden">SMS</span>
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <span className="hidden items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-[10px] font-semibold tracking-wide text-emerald-300 xl:inline-flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> PLATFORM READY
+            </span>
+            <button type="button" onClick={() => setIsOppoModalOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-teal-400/25 bg-teal-400/10 px-2.5 py-2 text-xs font-semibold text-teal-200 transition hover:border-teal-300/50 hover:bg-teal-400/15 sm:px-3" title="Open field terminal simulator">
+              <Smartphone className="h-4 w-4" /><span className="hidden sm:inline">Field terminal</span>
             </button>
-
-            {/* Mobile / QR Access Trigger Button */}
-            <button
-              type="button"
-              onClick={() => setIsMobileModalOpen(true)}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-300 hover:text-white rounded-lg text-xs font-mono font-medium transition-all shadow-sm cursor-pointer"
-            >
-              <QrCode className="w-3.5 h-3.5 text-sky-400" />
-              <span className="hidden sm:inline">Mobile QR Link</span>
-              <span className="sm:hidden">QR</span>
+            <button type="button" onClick={() => setIsSmsAlertsOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-2.5 py-2 text-xs font-semibold text-emerald-200 transition hover:bg-emerald-400/10" title="Configure notification alerts">
+              <Bell className="h-4 w-4" /><span className="hidden sm:inline">Alerts</span>
             </button>
-
-            <div className="hidden lg:flex items-center space-x-4">
-              <div className="flex items-center space-x-2 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800 text-xs font-mono">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="text-slate-300">Base: Pukekohe, Auckland (NZ)</span>
-              </div>
-              <div className="flex items-center space-x-2 bg-sky-950/60 px-3 py-1.5 rounded-lg border border-sky-800/50 text-xs font-mono text-sky-200">
-                <span>Target Seed:</span>
-                <span className="font-bold text-emerald-400">$1,500,000 NZD</span>
-              </div>
-            </div>
+            <button type="button" onClick={() => setIsMobileModalOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900/70 px-2.5 py-2 text-xs font-semibold text-slate-300 transition hover:border-slate-500 hover:text-white" title="Open mobile access and QR guide">
+              <QrCode className="h-4 w-4" /><span className="hidden md:inline">Mobile access</span>
+            </button>
           </div>
         </div>
 
-        {/* Tab Navigation Row */}
-        <div className="flex space-x-1 overflow-x-auto no-scrollbar py-2 border-t border-slate-900 text-xs">
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg font-medium whitespace-nowrap transition-all duration-150 cursor-pointer ${
-                  isActive
-                    ? 'bg-sky-500/10 text-sky-300 border border-sky-500/30 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
-                }`}
-              >
-                <span className={isActive ? 'text-sky-400' : 'text-slate-500'}>{item.icon}</span>
-                <span>{item.label}</span>
-                {item.badge && (
-                  <span
-                    className={`ml-1 px-1.5 py-0.2 text-[9px] font-mono rounded font-bold ${
-                      isActive ? 'bg-sky-400/20 text-sky-200' : 'bg-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div className="flex min-h-12 items-center gap-2 border-t border-slate-800/70 py-2">
+          <nav aria-label="Quick navigation" className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+            {quickLinks.map(id => {
+              const item = navItems.find(entry => entry.id === id)!;
+              const active = activeTab === id;
+              return (
+                <button key={id} type="button" onClick={() => navigate(id)} className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition ${active ? 'bg-cyan-400/10 text-cyan-200 ring-1 ring-inset ring-cyan-400/25' : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-100'}`}>
+                  <span className="h-4 w-4 [&>svg]:h-4 [&>svg]:w-4">{item.icon}</span>{item.label}
+                </button>
+              );
+            })}
+          </nav>
+          <div className="relative shrink-0">
+            <button type="button" aria-expanded={isModulesOpen} aria-controls="conveyor-module-menu" onClick={() => setIsModulesOpen(value => !value)} className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-bold transition ${isModulesOpen ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200' : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500 hover:text-white'}`}>
+              {isModulesOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}<span className="hidden sm:inline">All modules</span><span className="sm:hidden">Modules</span><ChevronDown className={`h-3.5 w-3.5 transition-transform ${isModulesOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isModulesOpen && (
+              <div id="conveyor-module-menu" className="absolute right-0 top-[calc(100%+12px)] z-[70] max-h-[min(75vh,680px)] w-[min(92vw,760px)] overflow-y-auto rounded-2xl border border-slate-700/90 bg-[#0b1727] p-4 shadow-2xl shadow-black/50 sm:p-5">
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div><p className="text-sm font-bold text-white">Workspace modules</p><p className="mt-1 text-xs text-slate-400">Jump directly to a project area</p></div>
+                  <span className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-mono text-slate-400">{filteredItems.length} MODULES</span>
+                </div>
+                <label className="mb-4 flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950/70 px-3 py-2.5 focus-within:border-cyan-400/50">
+                  <Search className="h-4 w-4 shrink-0 text-slate-500" />
+                  <input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search modules..." className="w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500" />
+                </label>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {sections.map(section => {
+                    const items = filteredItems.filter(item => item.section === section);
+                    if (!items.length) return null;
+                    return <section key={section}>
+                      <h3 className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">{section}</h3>
+                      <div className="space-y-1">
+                        {items.map(item => {
+                          const active = activeTab === item.id;
+                          return <button key={item.id} type="button" onClick={() => navigate(item.id)} className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs transition ${active ? 'bg-cyan-400/10 text-cyan-200 ring-1 ring-inset ring-cyan-400/20' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center text-slate-500 [&>svg]:h-4 [&>svg]:w-4">{item.icon}</span>
+                            <span className="min-w-0 flex-1">{item.label}</span>
+                            {item.badge && <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[8px] font-bold tracking-wide text-slate-500">{item.badge}</span>}
+                          </button>;
+                        })}
+                      </div>
+                    </section>;
+                  })}
+                </div>
+                {filteredItems.length === 0 && <p className="py-8 text-center text-sm text-slate-500">No modules match that search.</p>}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Mobile Access & Device Guide Modal */}
-      <MobileAccessModal 
-        isOpen={isMobileModalOpen} 
-        onClose={() => setIsMobileModalOpen(false)}
-        onOpenOppoSimulator={() => setIsOppoModalOpen(true)}
-      />
-
-      {/* Oppo A6x Field Terminal Simulator Modal */}
-      <OppoA6xTerminalModal 
-        isOpen={isOppoModalOpen}
-        onClose={() => setIsOppoModalOpen(false)}
-        onOpenSmsAlerts={() => {
-          setIsOppoModalOpen(false);
-          setIsSmsAlertsOpen(true);
-        }}
-      />
-
-      {/* SMS Alerts for Anonymous Info & Field Intelligence Modal */}
-      <SmsAlertsModal 
-        isOpen={isSmsAlertsOpen}
-        onClose={() => setIsSmsAlertsOpen(false)}
-      />
+      <MobileAccessModal isOpen={isMobileModalOpen} onClose={() => setIsMobileModalOpen(false)} onOpenOppoSimulator={() => setIsOppoModalOpen(true)} />
+      <OppoA6xTerminalModal isOpen={isOppoModalOpen} onClose={() => setIsOppoModalOpen(false)} onOpenSmsAlerts={() => { setIsOppoModalOpen(false); setIsSmsAlertsOpen(true); }} />
+      <SmsAlertsModal isOpen={isSmsAlertsOpen} onClose={() => setIsSmsAlertsOpen(false)} />
     </header>
   );
 };
