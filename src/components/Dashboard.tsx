@@ -159,7 +159,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             Active Monthly Intelligence: {getUnlockedCapabilityForMonth(suptGen)}
           </h3>
           <p className="text-xs font-mono text-slate-400 tabular-nums">
-            Live Fleet ({fleetHealth.total} Buoys):{' '}
+            Modelled Fleet ({fleetHealth.total} Units):{' '}
             <span className="text-emerald-300 font-bold">{fleetHealth.optimalPct.toFixed(1)}% Optimal</span> •{' '}
             <span className="text-amber-300 font-bold">{fleetHealth.degradedPct.toFixed(1)}% Degraded</span> •{' '}
             <span className="text-rose-300 font-bold">{fleetHealth.criticalPct.toFixed(1)}% Critical</span>
@@ -227,10 +227,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <div className="p-3.5 bg-emerald-950/25 border border-emerald-900/50 rounded-xl space-y-1">
               <div className="flex items-center space-x-2 text-emerald-300 font-semibold">
                 <CheckCircle2 className="w-4 h-4" />
-                <span>SaliBuoy Brine Injection Intervention</span>
+                <span>Brine-injection concept under evaluation</span>
               </div>
               <p className="text-slate-400">
-                Autonomous platforms harvest offshore wind and wave energy to concentrate seawater to 42–48 PSU natural brine and inject it into deep downwelling channels.
+                The concept explores renewable-powered marine platforms and sensing for controlled research into local salinity and density processes. Concentration, pumping, release mechanisms and any wider circulation effects are not validated by this dashboard; they require peer-reviewed modelling and independent ecological assessment.
               </p>
             </div>
           </div>
