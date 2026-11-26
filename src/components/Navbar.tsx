@@ -29,6 +29,7 @@ import {
   BrainCircuit,
   Megaphone,
   Menu,
+  Search,
   X
 } from 'lucide-react';
 
@@ -98,6 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isOppoModalOpen, setIsOppoModalOpen] = useState<boolean>(false);
   const [isSmsAlertsOpen, setIsSmsAlertsOpen] = useState<boolean>(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
+  const [mobileSearch, setMobileSearch] = useState('');
 
   const navItems = getNavItems(superintendentGen);
   const currentNavItem = navItems.find((n) => n.id === activeTab);
@@ -237,9 +239,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
+            <div className="border-b border-slate-800 p-3">
+              <label className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2.5 focus-within:border-cyan-400/60">
+                <Search className="h-4 w-4 text-slate-500" />
+                <input value={mobileSearch} onChange={(event) => setMobileSearch(event.target.value)} placeholder="Find a module..." className="w-full bg-transparent text-sm text-slate-100 outline-none placeholder:text-slate-500" />
+              </label>
+            </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-5">
               {GROUP_ORDER.map((groupName) => {
-                const items = navItems.filter((i) => i.group === groupName);
+                const term = mobileSearch.trim().toLowerCase();
+                const items = navItems.filter((i) => i.group === groupName && (!term || i.label.toLowerCase().includes(term)));
                 return (
                   <div key={groupName} className="space-y-1">
                     <div className="px-2.5 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider">
@@ -275,6 +284,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 );
               })}
+              {navItems.every((item) => !item.label.toLowerCase().includes(mobileSearch.trim().toLowerCase())) && (
+                <p className="px-2 py-6 text-center text-xs text-slate-500">No modules match your search.</p>
+              )}
             </div>
           </aside>
         </div>
@@ -317,12 +329,20 @@ export const SidebarRail: React.FC<SidebarRailProps> = ({
   superintendentGen
 }) => {
   const navItems = getNavItems(superintendentGen);
+  const [search, setSearch] = useState('');
+  const term = search.trim().toLowerCase();
 
   return (
     <aside className="hidden lg:flex w-64 shrink-0 flex-col border-r border-slate-800/80 bg-[#040a16]/90 sticky top-14 h-[calc(100vh-3.5rem)]">
+      <div className="border-b border-slate-800/80 p-3">
+        <label className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/80 px-2.5 py-2 focus-within:border-cyan-500/50">
+          <Search className="h-3.5 w-3.5 text-slate-500" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search workspace..." className="w-full bg-transparent text-xs text-slate-100 outline-none placeholder:text-slate-600" />
+        </label>
+      </div>
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
         {GROUP_ORDER.map((groupName) => {
-          const items = navItems.filter((i) => i.group === groupName);
+          const items = navItems.filter((i) => i.group === groupName && (!term || i.label.toLowerCase().includes(term)));
           return (
             <div key={groupName} className="space-y-1">
               <div className="px-2.5 pb-1 text-[10px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
@@ -364,6 +384,9 @@ export const SidebarRail: React.FC<SidebarRailProps> = ({
             </div>
           );
         })}
+        {navItems.every((item) => !item.label.toLowerCase().includes(term)) && (
+          <p className="px-2 py-6 text-center text-xs text-slate-500">No matching modules.</p>
+        )}
       </div>
 
       <div className="p-3 border-t border-slate-800/80 bg-slate-950/60 font-mono text-[10px] text-slate-400 space-y-1">
