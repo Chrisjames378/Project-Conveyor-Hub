@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { ActiveTab, OceanBoy, SuperintendentState } from './types';
 import { INITIAL_OCEAN_BOYS } from './db/oceanBoysFleet';
+import { loadFleetState, saveFleetState } from './services/fleetStorage';
 import {
   loadSuperintendentState,
   saveSuperintendentState,
@@ -41,7 +42,12 @@ export function App() {
     }
     return false;
   });
-  const [buoys, setBuoys] = useState<OceanBoy[]>(INITIAL_OCEAN_BOYS);
+  const [buoys, setBuoys] = useState<OceanBoy[]>(() => loadFleetState(INITIAL_OCEAN_BOYS));
+
+  // Persist fleet edits, patrol state and locally generated demo readings in this browser.
+  useEffect(() => {
+    saveFleetState(buoys);
+  }, [buoys]);
   const [superintendentState, setSuperintendentState] = useState<SuperintendentState>(() =>
     loadSuperintendentState()
   );
