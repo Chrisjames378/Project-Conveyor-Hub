@@ -593,9 +593,9 @@ export function OceanBoysFleet({
               }`}
             >
               <LayoutGrid className="w-4 h-4 text-teal-300" />
-              <span>LIVE SATELLITE MATRIX (ALL 23 BUOYS)</span>
+              <span>SATELLITE FEED SIMULATION (ALL 23 BUOYS)</span>
               <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-900 text-teal-300 border border-teal-800">
-                23 LIVE FEEDS
+                23 DEMO STREAMS
               </span>
             </button>
 
@@ -880,7 +880,7 @@ export function OceanBoysFleet({
       </div>
 
       {/* ========================================================================= */}
-      {/* VIEW MODE 1: LIVE SATELLITE MATRIX (ALL 23 BUOYS VISUAL WALL) */}
+      {/* VIEW MODE 1: SATELLITE FEED SIMULATION (ALL 23 BUOYS) */}
       {/* ========================================================================= */}
       {dashboardView === 'matrix' && (
         <div className="space-y-4">
@@ -933,7 +933,7 @@ export function OceanBoysFleet({
                     {/* Live Satellite Image */}
                     <img 
                       src={boy.satellitePass.imageUrl} 
-                      alt={`Live satellite view for ${boy.name}`}
+                      alt={`Satellite demo image for ${boy.name}`}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       style={getSpectralFilterStyle()}
                     />
@@ -1575,11 +1575,11 @@ export function OceanBoysFleet({
               <div className="flex items-center space-x-2">
                 <Terminal className="w-4 h-4 text-teal-400" />
                 <h3 className="text-sm font-bold text-white uppercase">
-                  LIVE SATELLITE DOWNLINK EVENT STREAM (TELEMETRY PACKETS)
+                  SIMULATED DOWNLINK EVENT LOG
                 </h3>
               </div>
               <span className="text-slate-500 text-[11px]">
-                Auto-polled via Warkworth & Awarua ground stations
+                Synthetic demo events; no ground-station connection
               </span>
             </div>
 
